@@ -1,0 +1,2510 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="dashboard">
+  <meta name="design-style" content="briefing">
+  <title>Dasbor UMP &amp; UMSP Indonesia 2027 — 15 Provinsi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces: warm stone-white paper */
+      --background: #faf9f5;
+      --surface-container-low: #ffffff;
+      --surface-container: #f1efe8;
+      --surface-container-high: #e6e2d6;
+
+      /* Ink */
+      --on-surface: #17181a;
+      --on-surface-variant: #56585c;
+
+      /* Rules */
+      --outline: #17181a;
+      --outline-variant: #dedad0;
+      --input-border: #c8c4b8;
+
+      /* Accents */
+      --primary: #17181a;
+      --on-primary: #faf9f5;
+      --primary-container: #f2b705;
+      --on-primary-container: #17181a;
+      --secondary: #1f4e5f;
+      --secondary-wash: #e8f0f3;
+      --tertiary: #785008;
+      --tertiary-wash: #f5e6c4;
+      --error: #b42318;
+      --on-error: #ffffff;
+
+      /* Semantic */
+      --positive: #2b6e52;
+      --positive-wash: #e6f1ec;
+      --warning: #785008;
+      --focus: #1f4e5f;
+
+      /* Data series */
+      --data-1: #1f4e5f;
+      --data-2: #d99000;
+      --data-3: #2b6e52;
+      --data-4: #b84a39;
+      --data-context: #c4bfb2;
+
+      /* Fonts */
+      --font-headline: 'Source Serif 4', serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-label: 'Geist Mono', monospace;
+
+      /* Shape */
+      --rounded: 0.25rem;
+      --rounded-lg: 0.375rem;
+      --rounded-full: 0.25rem;
+
+      /* Style effects */
+      --section-rule: 1.5px solid var(--outline);
+      --card-border: 1px solid var(--outline-variant);
+      --badge-radius: 2px;
+      --heading-tracking: -0.02em;
+      --label-tracking: 0.08em;
+
+      /* Type scale (Dashboard) */
+      --display-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.35rem);
+      --headline-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+      --subhead-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+      --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+      --label-size: 0.75rem;
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .page-grid {
+      display: grid;
+      gap: var(--space-lg);
+      padding: var(--space-lg);
+      max-width: 1200px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Dossier Header & Section Bar */
+    .dossier-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      border-bottom: var(--section-rule);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .dossier-bar-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .dossier-pill {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.6875rem;
+      letter-spacing: var(--label-tracking);
+      text-transform: uppercase;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--badge-radius);
+      display: inline-block;
+      line-height: 1.3;
+    }
+    .dossier-meta {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .dossier-header h1 {
+      font-family: var(--font-headline);
+      font-weight: 600;
+      font-size: var(--display-size);
+      letter-spacing: var(--heading-tracking);
+      line-height: 1.1;
+      margin: 0;
+      color: var(--on-surface);
+    }
+    .standfirst {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: var(--subhead-size);
+      color: var(--secondary);
+      margin: var(--space-sm) 0 0 0;
+      max-width: 72ch;
+      line-height: 1.45;
+    }
+
+    .section-heading {
+      font-family: var(--font-headline);
+      font-weight: 600;
+      font-size: var(--headline-size);
+      letter-spacing: var(--heading-tracking);
+      line-height: 1.2;
+      margin: 0 0 var(--space-xs) 0;
+      color: var(--on-surface);
+    }
+    .section-sub {
+      font-size: var(--body-size);
+      color: var(--on-surface-variant);
+      margin: 0 0 var(--space-md) 0;
+      max-width: 70ch;
+    }
+
+    /* Figure Cards */
+    .figure-card {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md) var(--space-lg);
+    }
+
+    /* KPI Summary Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+    .kpi-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: var(--space-xs);
+      transition: background-color var(--dur-short) var(--ease-out);
+    }
+    .kpi-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+    .index-num {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: var(--label-size);
+      color: var(--secondary);
+      letter-spacing: 0.06em;
+    }
+    .kpi-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .kpi-value {
+      font-family: var(--font-headline);
+      font-weight: 600;
+      font-size: clamp(1.5rem, 1.25rem + 0.9vw, 1.95rem);
+      font-variant-numeric: lining-nums tabular-nums;
+      line-height: 1.15;
+      color: var(--on-surface);
+      margin-top: var(--space-xs);
+    }
+    .kpi-sub {
+      font-size: 0.84rem;
+      color: var(--on-surface-variant);
+      line-height: 1.4;
+      margin-top: var(--space-xs);
+    }
+    .kpi-sub strong {
+      color: var(--on-surface);
+      font-weight: 600;
+    }
+
+    /* Filter Bar */
+    .filter-card {
+      padding: var(--space-md) var(--space-lg);
+    }
+    .filter-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)) auto;
+      gap: var(--space-md);
+      align-items: end;
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .field-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 500;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .input-control, .select-control {
+      min-height: 44px;
+      padding: 0.5rem 0.75rem;
+      background: var(--surface-container-low);
+      border: 1px solid var(--input-border);
+      border-radius: var(--rounded);
+      color: var(--on-surface);
+      font-size: 0.9375rem;
+      width: 100%;
+      transition: background-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+    .select-control {
+      padding-right: 2rem;
+      cursor: pointer;
+    }
+    .input-control:hover, .select-control:hover {
+      background-color: var(--background);
+    }
+    .input-control:focus, .select-control:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--focus);
+    }
+
+    /* Buttons */
+    .btn {
+      min-height: 44px;
+      padding: 0.5rem 1rem;
+      border-radius: var(--rounded);
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      border: 1px solid transparent;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+      white-space: nowrap;
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--secondary);
+    }
+    .btn-secondary {
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      border-color: var(--input-border);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--surface-container);
+    }
+    .btn-sm {
+      min-height: 36px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8125rem;
+    }
+    .btn-segmented-group {
+      display: inline-flex;
+      border: 1px solid var(--input-border);
+      border-radius: var(--rounded);
+      overflow: hidden;
+      background: var(--surface-container);
+    }
+    .btn-seg {
+      min-height: 38px;
+      padding: 0.375rem 0.75rem;
+      border: none;
+      background: transparent;
+      color: var(--on-surface-variant);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+    }
+    .btn-seg.active {
+      background: var(--primary);
+      color: var(--on-primary);
+    }
+    .btn-seg:not(.active):hover {
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+    }
+
+    .filter-status-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--outline-variant);
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+    }
+    .filter-status-strip .mono-val {
+      font-family: var(--font-label);
+      font-variant-numeric: tabular-nums;
+      color: var(--on-surface);
+      font-weight: 600;
+    }
+
+    /* Visualization Two-Column Layout */
+    .viz-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+      align-items: stretch;
+    }
+    .chart-card-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .chart-title {
+      font-family: var(--font-headline);
+      font-weight: 600;
+      font-size: var(--subhead-size);
+      margin: 0;
+      color: var(--on-surface);
+    }
+    .chart-subtitle {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      margin-top: var(--space-xs);
+    }
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      margin-bottom: var(--space-sm);
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: var(--badge-radius);
+      display: inline-block;
+    }
+    .swatch-ump { background: var(--data-1); }
+    .swatch-umsp { background: var(--data-2); }
+    .swatch-avg {
+      width: 16px;
+      height: 2px;
+      background: var(--data-4);
+    }
+    .chart-container {
+      position: relative;
+      min-height: 460px;
+      width: 100%;
+    }
+    .chart-footnote {
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+      margin-top: var(--space-sm);
+      padding-top: var(--space-sm);
+      border-top: 1px solid var(--outline-variant);
+    }
+
+    /* Regional Breakdown Side Panel */
+    .side-panel-stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+    .region-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      margin-top: var(--space-sm);
+    }
+    .region-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--background);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      padding: 0.65rem 0.75rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      transition: background-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+    .region-btn:hover {
+      background: var(--surface-container);
+    }
+    .region-btn.active {
+      background: var(--secondary-wash);
+      box-shadow: inset 3px 0 0 var(--secondary);
+    }
+    .region-btn-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-sm);
+    }
+    .region-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--on-surface);
+    }
+    .region-avg {
+      font-family: var(--font-label);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--secondary);
+    }
+    .region-bar-track {
+      width: 100%;
+      height: 6px;
+      background: var(--surface-container-high);
+      border-radius: var(--badge-radius);
+      overflow: hidden;
+    }
+    .region-bar-fill {
+      height: 100%;
+      background: var(--data-1);
+      border-radius: var(--badge-radius);
+    }
+    .region-meta {
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      color: var(--on-surface-variant);
+    }
+
+    .umsp-highlight-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      margin-top: var(--space-sm);
+    }
+    .umsp-quick-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      padding: 0.45rem 0.5rem;
+      border-bottom: 1px solid var(--outline-variant);
+      background: transparent;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .umsp-quick-item:last-child { border-bottom: none; }
+    .umsp-quick-item:hover { background: var(--surface-container); }
+    .umsp-quick-prov {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--on-surface);
+    }
+    .umsp-quick-count {
+      font-family: var(--font-label);
+      font-size: 0.72rem;
+      color: var(--on-surface-variant);
+      display: block;
+    }
+    .umsp-quick-val {
+      font-family: var(--font-label);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--tertiary);
+      text-align: right;
+    }
+
+    /* Tags / Badges */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-family: var(--font-label);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 0.18rem 0.45rem;
+      border-radius: var(--rounded);
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+    .tag-umsp {
+      background: var(--tertiary-wash);
+      color: var(--tertiary);
+    }
+    .tag-ump-only {
+      background: var(--surface-container);
+      color: var(--on-surface-variant);
+    }
+    .tag-positive {
+      background: var(--positive-wash);
+      color: var(--positive);
+    }
+
+    /* Interactive Data Table */
+    .table-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .table-scroll {
+      overflow-x: auto;
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded-lg);
+    }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    .data-table thead th {
+      background: var(--surface-container-low);
+      border-bottom: var(--section-rule);
+      padding: 0.75rem 0.85rem;
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+      vertical-align: bottom;
+    }
+    .data-table th.num, .data-table td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .sort-btn {
+      background: transparent;
+      border: none;
+      padding: 0;
+      font: inherit;
+      color: inherit;
+      text-transform: inherit;
+      letter-spacing: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .sort-btn:hover { color: var(--on-surface); }
+    .sort-btn.active { color: var(--secondary); }
+
+    .data-table tbody tr.prov-row {
+      border-bottom: 1px solid var(--outline-variant);
+      transition: background-color var(--dur-micro) var(--ease-out);
+    }
+    .data-table tbody tr.prov-row:hover {
+      background-color: var(--background);
+    }
+    .data-table tbody tr.prov-row.expanded {
+      background-color: var(--secondary-wash);
+    }
+    .data-table tbody td {
+      padding: 0.8rem 0.85rem;
+      vertical-align: top;
+    }
+    .prov-name {
+      font-weight: 700;
+      color: var(--on-surface);
+      display: block;
+    }
+    .prov-region {
+      font-size: 0.8rem;
+      color: var(--on-surface-variant);
+    }
+    .money-val {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--on-surface);
+      white-space: nowrap;
+    }
+    .sk-code {
+      font-family: var(--font-label);
+      font-size: 0.8rem;
+      color: var(--on-surface);
+      display: block;
+    }
+    .sk-sub {
+      font-size: 0.78rem;
+      color: var(--on-surface-variant);
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* Inline Detail Drawer inside Table */
+    .detail-row td {
+      padding: 0 !important;
+      background: var(--background);
+      border-bottom: var(--section-rule);
+    }
+    .detail-drawer {
+      padding: var(--space-lg);
+      display: grid;
+      gap: var(--space-lg);
+      animation: fadeSlide var(--dur-short) var(--ease-out);
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .detail-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+      gap: var(--space-md);
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+    }
+    .detail-meta-item .meta-k {
+      font-family: var(--font-label);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface-variant);
+      display: block;
+    }
+    .detail-meta-item .meta-v {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--on-surface);
+      margin-top: 2px;
+      display: block;
+    }
+    .detail-notes {
+      background: var(--surface-container);
+      border-left: 3px solid var(--secondary);
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      color: var(--on-surface);
+      line-height: 1.55;
+      border-radius: 0 var(--rounded) var(--rounded) 0;
+    }
+    .detail-sectors-box {
+      background: var(--surface-container-low);
+      border: var(--card-border);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+    }
+    .detail-sectors-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .detail-sectors-title {
+      font-family: var(--font-headline);
+      font-weight: 600;
+      font-size: 1.0625rem;
+      margin: 0;
+    }
+    .banten-tools {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .kbli-scroll-box {
+      max-height: 360px;
+      overflow-y: auto;
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+    }
+    .inner-sector-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .inner-sector-table th {
+      background: var(--surface-container);
+      border-bottom: 1px solid var(--outline);
+      padding: 0.55rem 0.7rem;
+      font-family: var(--font-label);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--on-surface-variant);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      text-align: left;
+    }
+    .inner-sector-table th.num, .inner-sector-table td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .inner-sector-table td {
+      padding: 0.55rem 0.7rem;
+      border-bottom: 1px solid var(--outline-variant);
+      vertical-align: top;
+    }
+    .inner-sector-table tr:last-child td { border-bottom: none; }
+
+    /* Cross-Province UMSP Directory */
+    .dir-controls {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) auto;
+      gap: var(--space-md);
+      align-items: end;
+      margin-bottom: var(--space-md);
+    }
+
+    /* Aside Methodology Box */
+    .aside-box {
+      background: var(--surface-container);
+      border-top: var(--section-rule);
+      border-radius: 0 0 var(--rounded-lg) var(--rounded-lg);
+      padding: var(--space-lg);
+    }
+    .aside-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+      gap: var(--space-lg);
+      margin-top: var(--space-md);
+    }
+    .aside-item h3 {
+      font-family: var(--font-headline);
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin: 0 0 var(--space-xs) 0;
+      color: var(--on-surface);
+    }
+    .aside-item p, .aside-item ul {
+      font-size: 0.875rem;
+      color: var(--on-surface-variant);
+      margin: 0;
+      padding-left: 0;
+      list-style: none;
+      line-height: 1.55;
+    }
+    .aside-item li + li { margin-top: 0.35rem; }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--space-xl) var(--space-md);
+      color: var(--on-surface-variant);
+    }
+    .empty-state p {
+      margin: 0 0 var(--space-md) 0;
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 960px) {
+      .filter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .viz-grid {
+        grid-template-columns: 1fr;
+      }
+      .dir-controls {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-md);
+        gap: var(--space-md);
+      }
+      .filter-grid, .dir-controls {
+        grid-template-columns: 1fr;
+      }
+      .chart-container {
+        min-height: 400px;
+      }
+      .figure-card {
+        padding: var(--space-md);
+      }
+      .detail-drawer {
+        padding: var(--space-md);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-grid">
+    <!-- HEADER / DOSSIER MASTHEAD -->
+    <header class="dossier-header">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">BRIEFING PENGUPAHAN 2027</span>
+          <span class="dossier-meta">15 PROVINSI · 18 SK GUBERNUR · BERLAKU 1 JANUARI 2027</span>
+        </div>
+        <span class="dossier-meta">DASAR: UU NO. 27/2026 &amp; PP NO. 49/2025</span>
+      </div>
+      <h1>Dasbor Upah Minimum Provinsi &amp; Sektoral (UMP/UMSP) Tahun 2027</h1>
+      <p class="standfirst">Eksplorasi komparatif penetapan upah minimum di 15 provinsi Indonesia berdasarkan Surat Keputusan Gubernur yang diterbitkan 18–21 November 2026, beserta rincian tarif sektoral UMSP dan kode KBLI.</p>
+    </header>
+
+    <!-- KARTU RINGKASAN STATISTIK -->
+    <section aria-label="Ringkasan Statistik Nasional">
+      <div class="kpi-grid" id="kpi-grid">
+        <article class="figure-card kpi-card">
+          <div class="kpi-head">
+            <span class="kpi-label">Cakupan Provinsi &amp; SK</span>
+            <span class="index-num">01</span>
+          </div>
+          <div class="kpi-value" id="kpi-total-prov">15 Provinsi</div>
+          <div class="kpi-sub" id="kpi-total-sub"><strong>18 SK Gubernur</strong> · 7 provinsi menetapkan UMSP (104 entri sektor/KBLI)</div>
+        </article>
+
+        <article class="figure-card kpi-card">
+          <div class="kpi-head">
+            <span class="kpi-label">UMP Tertinggi 2027</span>
+            <span class="index-num">02</span>
+          </div>
+          <div class="kpi-value" id="kpi-max-ump">Rp6.136.941</div>
+          <div class="kpi-sub" id="kpi-max-sub"><strong>DKI Jakarta</strong> · SK No. 1270 Tahun 2026</div>
+        </article>
+
+        <article class="figure-card kpi-card">
+          <div class="kpi-head">
+            <span class="kpi-label">Rata-Rata UMP (15 Prov.)</span>
+            <span class="index-num">03</span>
+          </div>
+          <div class="kpi-value" id="kpi-avg-ump">Rp3.756.957</div>
+          <div class="kpi-sub" id="kpi-avg-sub">Median <strong>Rp3.949.697</strong> · Terendah NTT Rp2.602.441</div>
+        </article>
+
+        <article class="figure-card kpi-card">
+          <div class="kpi-head">
+            <span class="kpi-label">UMSP Tertinggi 2027</span>
+            <span class="index-num">04</span>
+          </div>
+          <div class="kpi-value" id="kpi-max-umsp">Rp4.644.907</div>
+          <div class="kpi-sub" id="kpi-max-umsp-sub"><strong>Bali</strong> — Sektor Hotel Bintang (+1,88% vs UMP)</div>
+        </article>
+      </div>
+    </section>
+
+    <!-- PANEL FILTER & PENCARIAN -->
+    <section aria-label="Kontrol Filter dan Pencarian">
+      <div class="figure-card filter-card">
+        <div class="filter-grid">
+          <div class="field-group">
+            <label for="search-input" class="field-label">Cari Provinsi, Nomor SK, Sektor, atau KBLI</label>
+            <input id="search-input" type="search" class="input-control" placeholder="Contoh: Banten, 709, Kelapa Sawit, 05101, Hotel…" oninput="handleFilterChange()">
+          </div>
+
+          <div class="field-group">
+            <label for="region-filter" class="field-label">Wilayah</label>
+            <select id="region-filter" class="select-control" onchange="handleFilterChange()">
+              <option value="ALL">Semua Wilayah (15)</option>
+              <option value="Sumatera">Sumatera (6)</option>
+              <option value="Jawa">Jawa (5)</option>
+              <option value="Bali &amp; Nusa Tenggara">Bali &amp; Nusa Tenggara (2)</option>
+              <option value="Kalimantan">Kalimantan (1)</option>
+              <option value="Sulawesi">Sulawesi (1)</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="umsp-filter" class="field-label">Status Penetapan UMSP</label>
+            <select id="umsp-filter" class="select-control" onchange="handleFilterChange()">
+              <option value="ALL">Semua Provinsi (15)</option>
+              <option value="HAS_UMSP">Memiliki UMSP (7)</option>
+              <option value="UMP_ONLY">Hanya UMP (8)</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="sort-select" class="field-label">Urutkan</label>
+            <select id="sort-select" class="select-control" onchange="handleSortSelectChange()">
+              <option value="ump-desc">UMP Tertinggi → Terendah</option>
+              <option value="ump-asc">UMP Terendah → Tertinggi</option>
+              <option value="name-asc">Nama Provinsi (A–Z)</option>
+              <option value="umsp-desc">UMSP Tertinggi → Terendah</option>
+              <option value="date-asc">Tanggal SK (Terawal)</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-secondary" onclick="resetAllFilters()">Reset Filter</button>
+        </div>
+
+        <div class="filter-status-strip">
+          <span id="filter-summary-text">Menampilkan <strong>15</strong> dari 15 provinsi</span>
+          <span id="subset-stats-text">Rata-rata tampilan aktif: <span class="mono-val">Rp3.756.957</span> · Selisih tertinggi–terendah: <span class="mono-val">Rp3.534.500</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISUALISASI GRAFIK & RINGKASAN WILAYAH -->
+    <section aria-label="Visualisasi Perbandingan Upah per Provinsi">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">01 · VISUALISASI</span>
+          <span class="dossier-meta">KOMPARASI BESARAN UMP &amp; UMSP 2027 PER PROVINSI</span>
+        </div>
+        <span class="dossier-meta">KLIK BATANG PROVINSI UNTUK MEMBUKA RINCIAN SK</span>
+      </div>
+
+      <div class="viz-grid">
+        <div class="figure-card">
+          <div class="chart-card-head">
+            <div>
+              <h2 class="chart-title" id="chart-heading">Perbandingan UMP &amp; UMSP Tertinggi per Provinsi (2027)</h2>
+              <div class="chart-subtitle" id="chart-subheading">Satuan Rupiah per bulan · Mengikuti filter dan urutan aktif</div>
+            </div>
+            <div class="btn-segmented-group" role="group" aria-label="Mode Grafik">
+              <button type="button" class="btn-seg active" id="mode-btn-level" onclick="setChartMode('level')">UMP &amp; UMSP (Rp)</button>
+              <button type="button" class="btn-seg" id="mode-btn-premium" onclick="setChartMode('premium')">Premi UMSP (%)</button>
+            </div>
+          </div>
+
+          <div class="chart-legend" id="chart-legend">
+            <span class="legend-item"><span class="legend-swatch swatch-ump"></span> UMP 2027</span>
+            <span class="legend-item"><span class="legend-swatch swatch-umsp"></span> UMSP Tertinggi (jika ditetapkan)</span>
+            <span class="legend-item"><span class="legend-swatch swatch-avg"></span> Rata-Rata UMP 15 Provinsi (Rp3.756.957)</span>
+          </div>
+
+          <div class="chart-container" id="chart-container">
+            <canvas id="wageChart" aria-label="Grafik perbandingan upah minimum provinsi dan sektoral tahun 2027"></canvas>
+          </div>
+          <div class="empty-state" id="chart-empty" style="display: none;">
+            <p>Tidak ada provinsi yang sesuai dengan filter pencarian saat ini untuk ditampilkan di grafik.</p>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="resetAllFilters()">Tampilkan Semua Provinsi</button>
+          </div>
+
+          <p class="chart-footnote" id="chart-footnote">Catatan: Provinsi tanpa batang emas (8 provinsi) hanya menerbitkan penetapan UMP dalam berkas SK Gubernur yang dihimpun. Klik salah satu batang untuk melompat ke rincian SK &amp; sektor di tabel.</p>
+        </div>
+
+        <div class="side-panel-stack">
+          <div class="figure-card">
+            <div class="kpi-head">
+              <h3 class="chart-title">Rata-Rata UMP per Wilayah</h3>
+              <span class="index-num">KLIK FILTER</span>
+            </div>
+            <div class="region-list" id="region-breakdown-list"></div>
+          </div>
+
+          <div class="figure-card">
+            <div class="kpi-head">
+              <h3 class="chart-title">7 Provinsi dengan UMSP 2027</h3>
+              <span class="index-num">TERTINGGI</span>
+            </div>
+            <div class="umsp-highlight-list" id="umsp-quick-list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABEL INTERAKTIF PROVINSI & RINCIAN SK -->
+    <section aria-label="Tabel Interaktif Data UMP dan UMSP" id="province-table-section">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">02 · TABEL DATA</span>
+          <span class="dossier-meta">SURAT KEPUTUSAN GUBERNUR, BESARAN UMP &amp; RINCIAN SEKTOR UMSP</span>
+        </div>
+        <span class="dossier-meta">KLIK BARIS UNTUK MEMBUKA RINCIAN LENGKAP &amp; KODE KBLI</span>
+      </div>
+
+      <div class="table-toolbar">
+        <div>
+          <h2 class="section-heading">Daftar Penetapan UMP &amp; UMSP 2027 per Provinsi</h2>
+          <p class="section-sub" style="margin-bottom: 0;">Klik judul kolom untuk mengurutkan, atau tekan tombol rincian pada setiap baris untuk melihat ketentuan SK dan seluruh tarif UMSP.</p>
+        </div>
+        <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary btn-sm" id="toggle-expand-all-btn" onclick="toggleExpandAll()">Buka Semua Rincian</button>
+        </div>
+      </div>
+
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 48px;">#</th>
+              <th>
+                <button type="button" class="sort-btn" id="sort-th-name" onclick="sortByColumn('name')">
+                  Provinsi &amp; Wilayah <span aria-hidden="true">↕</span>
+                </button>
+              </th>
+              <th class="num">
+                <button type="button" class="sort-btn active" id="sort-th-ump" onclick="sortByColumn('ump')">
+                  UMP 2027 (Rp/Bln) <span aria-hidden="true">↓</span>
+                </button>
+              </th>
+              <th>UMSP 2027 &amp; Cakupan Sektor</th>
+              <th>Nomor SK Gubernur</th>
+              <th>
+                <button type="button" class="sort-btn" id="sort-th-date" onclick="sortByColumn('date')">
+                  Tgl Penetapan <span aria-hidden="true">↕</span>
+                </button>
+              </th>
+              <th style="text-align: right;">Rincian</th>
+            </tr>
+          </thead>
+          <tbody id="province-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- DIREKTORI LINTAS PROVINSI: SEKTOR UMSP & KBLI -->
+    <section aria-label="Direktori Lengkap Sektor UMSP dan Kode KBLI">
+      <div class="dossier-bar">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">03 · INDEKS SEKTORAL</span>
+          <span class="dossier-meta">PENJELAJAH TARIF UMSP &amp; KODE KBLI LINTAS PROVINSI (104 ENTRI)</span>
+        </div>
+        <span class="dossier-meta">7 PROVINSI · KBLI 5 DIGIT &amp; KELOMPOK SEKTOR</span>
+      </div>
+
+      <div class="figure-card">
+        <h2 class="section-heading">Direktori Tarif UMSP &amp; Kode KBLI Tahun 2027</h2>
+        <p class="section-sub">Telusuri seluruh sektor dan kode KBLI yang memiliki tarif UMSP di 7 provinsi (Banten, Bali, Kepulauan Bangka Belitung, Kalimantan Tengah, Lampung, Riau, dan Sulawesi Selatan).</p>
+
+        <div class="dir-controls">
+          <div class="field-group">
+            <label for="kbli-search-input" class="field-label">Cari Kode KBLI atau Nama Sektor / Industri</label>
+            <input id="kbli-search-input" type="search" class="input-control" placeholder="Contoh: 20116, Sawit, Konstruksi, Batu Bara, Hotel, Karet…" oninput="renderKbliDirectory()">
+          </div>
+
+          <div class="field-group">
+            <label for="kbli-prov-filter" class="field-label">Provinsi dengan UMSP</label>
+            <select id="kbli-prov-filter" class="select-control" onchange="renderKbliDirectory()">
+              <option value="ALL">Semua 7 Provinsi UMSP (104 entri)</option>
+              <option value="banten">Banten (83 KBLI · 3 Sektor)</option>
+              <option value="riau">Riau (9 KBLI · 2 SK Sektor)</option>
+              <option value="kalimantan-tengah">Kalimantan Tengah (6 KBLI)</option>
+              <option value="sulawesi-selatan">Sulawesi Selatan (3 Sektor KBLI 5-Digit)</option>
+              <option value="bali">Bali (1 Sektor)</option>
+              <option value="bangka-belitung">Kep. Bangka Belitung (1 Sektor)</option>
+              <option value="lampung">Lampung (1 Sektor · KBLI 10434)</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-secondary" onclick="resetKbliDirectory()">Reset Indeks</button>
+        </div>
+
+        <div style="font-family: var(--font-label); font-size: var(--label-size); color: var(--on-surface-variant); margin-bottom: var(--space-sm);" id="kbli-count-label">
+          Menampilkan 104 dari 104 entri sektor/KBLI
+        </div>
+
+        <div class="kbli-scroll-box" style="max-height: 440px;">
+          <table class="inner-sector-table">
+            <thead>
+              <tr>
+                <th>Provinsi</th>
+                <th>Kelompok Sektor</th>
+                <th>Kode KBLI</th>
+                <th>Uraian Lapangan Usaha</th>
+                <th class="num">Tarif UMSP 2027</th>
+                <th class="num">Selisih vs UMP</th>
+                <th>Nomor SK UMSP</th>
+              </tr>
+            </thead>
+            <tbody id="kbli-directory-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATATAN REGULASI & METODOLOGI -->
+    <aside class="aside-box" aria-label="Landasan Hukum dan Catatan Metodologi">
+      <div class="dossier-bar" style="margin-bottom: var(--space-sm);">
+        <div class="dossier-bar-left">
+          <span class="dossier-pill">LANDASAN HUKUM &amp; CATATAN</span>
+          <span class="dossier-meta">RINGKASAN KETENTUAN NORMATIF SK GUBERNUR TAHUN 2027</span>
+        </div>
+      </div>
+
+      <div class="aside-grid">
+        <div class="aside-item">
+          <h3>Kerangka Regulasi Nasional</h3>
+          <p>Seluruh SK Gubernur merujuk pada mandat <strong>Pasal 137 ayat (2) UU Nomor 27 Tahun 2026</strong> tentang Pelindungan Ketenagakerjaan serta <strong>PP Nomor 49 Tahun 2025</strong> (Perubahan Kedua atas PP Nomor 36 Tahun 2021 tentang Pengupahan) dan Surat Edaran Menaker RI No. B-M/209/HI.01.00/XI/2026 tanggal 16 November 2026.</p>
+        </div>
+
+        <div class="aside-item">
+          <h3>Ketentuan Masa Kerja &amp; UMKM</h3>
+          <ul>
+            <li><strong>Masa kerja &lt; 1 tahun:</strong> UMP dan UMSP berlaku sebagai batas upah bulanan terendah (upah pokok + tunjangan tetap).</li>
+            <li><strong>Masa kerja ≥ 1 tahun:</strong> Pengusaha wajib menyusun dan menerapkan Struktur dan Skala Upah di perusahaan.</li>
+            <li><strong>Usaha Mikro &amp; Kecil:</strong> Ditetapkan minimal 50% dari Upah Minimum di Kep. Bangka Belitung, Kalimantan Tengah, dan Lampung; dikecualikan di NTT dan Sulawesi Selatan.</li>
+          </ul>
+        </div>
+
+        <div class="aside-item">
+          <h3>Catatan Administratif Naskah SK</h3>
+          <ul>
+            <li><strong>Banten &amp; Riau:</strong> Menerbitkan SK UMSP terpisah dari SK UMP. Banten membuka permohonan perkecualian hingga 31 Maret 2027 (bipartit + audit eksternal).</li>
+            <li><strong>SK UMSP Pertanian/Perkebunan Riau:</strong> Pada naskah SK penetapan tanggal 20 November 2026 untuk tahun berlaku 2027, nomor surat tercatat sebagai <code>Kpts. 842/XI/2024</code>.</li>
+            <li><strong>Sumber data:</strong> Dihimpun dari 18 berkas salinan SK Gubernur dari 15 provinsi.</li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const PROVINCES = [
+      {
+        id: `dki-jakarta`,
+        name: `DKI Jakarta`,
+        region: `Jawa`,
+        ump: 6136941.00,
+        skUmp: `Nomor 1270 Tahun 2026`,
+        skUmsp: null,
+        dateIso: `2026-11-20`,
+        dateDisplay: `20 Nov 2026`,
+        city: `Jakarta`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `Berlaku bagi pekerja dengan masa kerja kurang dari 1 tahun. Pengusaha wajib menerapkan struktur dan skala upah untuk masa kerja 1 tahun atau lebih. Pemprov DKI Jakarta memberikan kebijakan kesejahteraan (bantuan layanan transportasi, penyediaan pangan harga murah, dan biaya personal pendidikan) bagi pekerja ber-KTP DKI Jakarta dengan gaji maksimal 1,15× UMP (Rp7.057.482,15).`,
+        umspSectors: []
+      },
+      {
+        id: `bali`,
+        name: `Bali`,
+        region: `Bali & Nusa Tenggara`,
+        ump: 4559287.00,
+        skUmp: `Nomor 995/03-M/HK/2026`,
+        skUmsp: `Nomor 995/03-M/HK/2026`,
+        dateIso: `2026-11-19`,
+        dateDisplay: `19 Nov 2026`,
+        city: `Denpasar`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `UMP dan UMSP ditetapkan bersama dalam satu Keputusan Gubernur berdasarkan Berita Acara Dewan Pengupahan Provinsi Bali Nomor 001/DPP-Bali/XI/2026 tanggal 18 November 2026.`,
+        umspSectors: [
+          {
+            group: `Sektor Hotel Bintang`,
+            kbli: `KBLI 2025`,
+            desc: `Sektor Hotel Bintang sesuai kode Klasifikasi Baku Lapangan Usaha Indonesia Tahun 2025`,
+            wage: 4644907.00,
+            sk: `Nomor 995/03-M/HK/2026`
+          }
+        ]
+      },
+      {
+        id: `bangka-belitung`,
+        name: `Kepulauan Bangka Belitung`,
+        region: `Sumatera`,
+        ump: 4299000.00,
+        skUmp: `Nomor 100.3.3.1/857/DISNAKER/2026`,
+        skUmsp: `Nomor 100.3.3.1/857/DISNAKER/2026`,
+        dateIso: `2026-11-19`,
+        dateDisplay: `19 Nov 2026`,
+        city: `Pangkalpinang`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `UMP dan UMSP merupakan upah bulanan terendah yang terdiri dari upah pokok dan tunjangan tetap. Perusahaan yang telah memberikan upah lebih tinggi dilarang menurunkan upah. Pada usaha mikro dan kecil, upah ditetapkan paling rendah 50% dari Upah Minimum yang berlaku.`,
+        umspSectors: [
+          {
+            group: `Sektor Pertambangan & Penggalian`,
+            kbli: `Sektoral`,
+            desc: `Sektor Pertambangan dan Penggalian Provinsi Kepulauan Bangka Belitung`,
+            wage: 4350000.00,
+            sk: `Nomor 100.3.3.1/857/DISNAKER/2026`
+          }
+        ]
+      },
+      {
+        id: `sulawesi-selatan`,
+        name: `Sulawesi Selatan`,
+        region: `Sulawesi`,
+        ump: 4233913.25,
+        skUmp: `Nomor 1968/XI/Tahun 2026`,
+        skUmsp: `Nomor 1968/XI/Tahun 2026`,
+        dateIso: `2026-11-20`,
+        dateDisplay: `20 Nov 2026`,
+        city: `Makassar`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `Terdiri atas upah pokok dan tunjangan tetap; berlaku bagi pekerja dengan masa kerja kurang dari 1 tahun. Ketentuan UMP dan UMSP dikecualikan bagi usaha mikro dan usaha kecil. Pengusaha wajib menerapkan struktur dan skala upah untuk masa kerja lebih dari 1 tahun.`,
+        umspSectors: [
+          {
+            group: `Pertambangan, Energi & Kelistrikan`,
+            kbli: `KBLI 5-Digit`,
+            desc: `Sektor pertambangan, energi, dan kelistrikan`,
+            wage: 4293995.04,
+            sk: `Nomor 1968/XI/Tahun 2026`
+          },
+          {
+            group: `Industri Pengolahan & Retail`,
+            kbli: `KBLI 5-Digit`,
+            desc: `Sektor industri pengolahan dan retail`,
+            wage: 4235702.42,
+            sk: `Nomor 1968/XI/Tahun 2026`
+          },
+          {
+            group: `Aktivitas Jasa`,
+            kbli: `KBLI 5-Digit`,
+            desc: `Sektor aktivitas jasa`,
+            wage: 4234608.39,
+            sk: `Nomor 1968/XI/Tahun 2026`
+          }
+        ]
+      },
+      {
+        id: `kepulauan-riau`,
+        name: `Kepulauan Riau`,
+        region: `Sumatera`,
+        ump: 4229356.00,
+        skUmp: `Nomor 1232 Tahun 2026`,
+        skUmsp: null,
+        dateIso: `2026-11-20`,
+        dateDisplay: `20 Nov 2026`,
+        city: `Tanjungpinang`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `Berlaku hanya bagi pekerja dengan masa kerja kurang dari 1 tahun. Bagi pekerja dengan masa kerja di atas 1 tahun, kenaikan dilakukan melalui perundingan bersama sesuai struktur dan skala upah perusahaan. Perusahaan yang telah memberi upah lebih tinggi dilarang menurunkan upah.`,
+        umspSectors: []
+      },
+      {
+        id: `sumatera-selatan`,
+        name: `Sumatera Selatan`,
+        region: `Sumatera`,
+        ump: 4210059.00,
+        skUmp: `Nomor 719/KPTS/DISNAKERTRANS/2026`,
+        skUmsp: null,
+        dateIso: `2026-11-19`,
+        dateDisplay: `19 Nov 2026`,
+        city: `Palembang`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `Naik Rp267.096 (+6,77%) dibanding UMP Sumatera Selatan Tahun 2026. Berlaku dengan standar 7 jam kerja atau 8 jam kerja sehari dan/atau 40 jam kerja seminggu bagi pekerja masa kerja kurang dari 1 tahun.`,
+        umspSectors: []
+      },
+      {
+        id: `riau`,
+        name: `Riau`,
+        region: `Sumatera`,
+        ump: 4031142.72,
+        skUmp: `Nomor Kpts. 641/XI/2026`,
+        skUmsp: `Nomor Kpts. 843/XI/2026 & Kpts. 842/XI/2024`,
+        dateIso: `2026-11-20`,
+        dateDisplay: `20 Nov 2026`,
+        city: `Pekanbaru`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `UMP dan UMSP berlaku bagi pekerja masa kerja kurang dari 1 tahun dan tidak dapat ditangguhkan. Jika perusahaan berada di wilayah dengan UMK Tahun 2026 lebih tinggi dari UMSP, maka melaksanakan UMK tersebut. Catatan administratif: SK UMSP Pertanian/Perkebunan bernomor Kpts. 842/XI/2024 pada naskah SK yang ditetapkan 20 November 2026 untuk tahun berlaku 2027.`,
+        umspSectors: [
+          { group: `Sub Sektor Migas`, kbli: `06100`, desc: `Sub Sektor Pertambangan Minyak Bumi`, wage: 4054676.18, sk: `Nomor Kpts. 843/XI/2026` },
+          { group: `Sub Sektor Migas`, kbli: `09100`, desc: `Aktivitas Penunjang Pertambangan Minyak Bumi dan Gas Alam`, wage: 4054676.18, sk: `Nomor Kpts. 843/XI/2026` },
+          { group: `Pertanian / Perkebunan`, kbli: `01261`, desc: `Perkebunan Buah Kelapa`, wage: 4034603.53, sk: `Nomor Kpts. 842/XI/2024` },
+          { group: `Pertanian / Perkebunan`, kbli: `01262`, desc: `Perkebunan Buah Kelapa Sawit`, wage: 4034603.53, sk: `Nomor Kpts. 842/XI/2024` },
+          { group: `Pertanian / Perkebunan`, kbli: `01291`, desc: `Perkebunan Karet`, wage: 4034603.53, sk: `Nomor Kpts. 842/XI/2024` },
+          { group: `Pertanian / Perkebunan`, kbli: `10421`, desc: `Industri Kopra`, wage: 4034603.53, sk: `Nomor Kpts. 842/XI/2024` },
+          { group: `Pertanian / Perkebunan`, kbli: `10431`, desc: `Industri Minyak Mentah Kelapa Sawit (Crude Palm Oil)`, wage: 4034603.53, sk: `Nomor Kpts. 842/XI/2024` },
+          { group: `Pertanian / Perkebunan`, kbli: `10773`, desc: `Industri Produk Masak dari Buah Kelapa`, wage: 4034603.53, sk: `Nomor Kpts. 842/XI/2024` },
+          { group: `Pertanian / Perkebunan`, kbli: `22123`, desc: `Industri Karet Remah (Crumb Rubber)`, wage: 4034603.53, sk: `Nomor Kpts. 842/XI/2024` }
+        ]
+      },
+      {
+        id: `kalimantan-tengah`,
+        name: `Kalimantan Tengah`,
+        region: `Kalimantan`,
+        ump: 3949697.00,
+        skUmp: `Nomor 100.3.3.1/317/2026`,
+        skUmsp: `Nomor 100.3.3.1/317/2026`,
+        dateIso: `2026-11-18`,
+        dateDisplay: `18 Nov 2026`,
+        city: `Palangka Raya`,
+        effective: `1 Januari – 31 Desember 2027`,
+        notes: `Menetapkan UMP dan 6 sektor UMSP sekaligus bagi pekerja masa kerja kurang dari 1 tahun. Usaha mikro dan kecil ditetapkan paling rendah 50% dari Upah Minimum yang berlaku. Wajib struktur dan skala upah untuk masa kerja 1 tahun atau lebih.`,
+        umspSectors: [
+          { group: `Pertambangan`, kbli: `05101`, desc: `Pertambangan Batu Bara`, wage: 3979691.00, sk: `Nomor 100.3.3.1/317/2026` },
+          { group: `Pertambangan`, kbli: `07221`, desc: `Pertambangan Emas dan Perak`, wage: 3979691.00, sk: `Nomor 100.3.3.1/317/2026` },
+          { group: `Kelapa Sawit & CPO`, kbli: `10431`, desc: `Industri Minyak Mentah Kelapa Sawit (Crude Palm Oil)`, wage: 3956950.00, sk: `Nomor 100.3.3.1/317/2026` },
+          { group: `Kelapa Sawit & CPO`, kbli: `10432`, desc: `Industri Minyak Mentah Inti Kelapa Sawit (Crude Palm Kernel Oil)`, wage: 3956950.00, sk: `Nomor 100.3.3.1/317/2026` },
+          { group: `Kelapa Sawit & CPO`, kbli: `10437`, desc: `Industri Minyak Goreng Kelapa Sawit`, wage: 3956950.00, sk: `Nomor 100.3.3.1/317/2026` },
+          { group: `Kelapa Sawit & CPO`, kbli: `01262`, desc: `Pertanian Kelapa Sawit`, wage: 3956950.00, sk: `Nomor 100.3.3.1/317/2026` }
+        ]
+      },
+      {
+        id: `banten`,
+        name: `Banten`,
+        region: `Jawa`,
+        ump: 3372828.70,
+        skUmp: `Nomor 708 Tahun 2026`,
+        skUmsp: `Nomor 709 Tahun 2026`,
+        dateIso: `2026-11-20`,
+        dateDisplay: `20 Nov 2026`,
+        city: `Serang`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `Menerbitkan dua SK terpisah: SK No. 708/2026 (UMP) dan SK No. 709/2026 (UMSP dalam 3 kelompok sektor dengan total 83 kode KBLI). Perusahaan yang belum mampu dapat mengajukan permohonan perkecualian kepada Gubernur melalui Disnakertrans Banten paling lambat 31 Maret 2027 berdasarkan kesepakatan bipartit dan audit eksternal.`,
+        umspSectors: [
+          { group: `Sektor 1`, kbli: `07229`, desc: `Pertambangan Bijih Logam Mulia Lainnya`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `10721`, desc: `Industri Gula Pasir`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `20111`, desc: `Industri Asam, Basa, dan Garam Anorganik`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `20112`, desc: `Industri Gas Industri`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `20113`, desc: `Industri Kimia Dasar Zat Warna dan Pigmen`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `20114`, desc: `Industri Kimia Dasar Radioaktif`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `20115`, desc: `Industri Kimia Dasar Organik dari Sumber Daya Alam Hayati`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `20116`, desc: `Industri Kimia Dasar dari Minyak Bumi, Gas Alam, dan Batu Bara`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `20119`, desc: `Industri Kimia Dasar Anorganik Lainnya`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `20299`, desc: `Industri Barang Kimia Lainnya YTDL`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `23111`, desc: `Industri Kaca Lembaran`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `23919`, desc: `Industri Produk Refraktori (Tahan Api) Lainnya`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `23922`, desc: `Industri Genteng dari Tanah Liat atau Keramik`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `23929`, desc: `Industri Bahan Bangunan Lainnya dari Tanah Liat atau Keramik`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `24201`, desc: `Industri Logam Dasar Mulia`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `24202`, desc: `Industri Logam Dasar Bukan Besi Lainnya`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `24203`, desc: `Penggilingan Logam Bukan Besi`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `24204`, desc: `Ekstrusi Logam Bukan Besi`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `24205`, desc: `Industri Pipa dan Sambungan Pipa dari Logam Bukan Besi dan Baja`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `24320`, desc: `Pengecoran Logam Bukan Besi dan Baja`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `27320`, desc: `Industri Kabel dan Kawat Listrik dan Elektronik Lainnya`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `28113`, desc: `Industri Komponen dan Suku Cadang Mesin dan Turbin`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `28240`, desc: `Industri Mesin Penambangan, Penggalian dan Konstruksi`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `35111`, desc: `Pembangkitan Tenaga Listrik dari Sumber Energi Tidak Terbarukan yang Menghasilkan Emisi`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `35140`, desc: `Penyediaan Tenaga Listrik dalam Satu Kesatuan Usaha`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `41011`, desc: `Konstruksi Konvensional Gedung Hunian`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `41012`, desc: `Konstruksi Konvensional Gedung Perkantoran`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `41013`, desc: `Konstruksi Konvensional Gedung Industri`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `41014`, desc: `Konstruksi Konvensional Gedung Perbelanjaan`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `41015`, desc: `Konstruksi Konvensional Gedung Kesehatan`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `41016`, desc: `Konstruksi Konvensional Gedung Pendidikan`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `41017`, desc: `Konstruksi Konvensional Gedung Penginapan`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `41018`, desc: `Konstruksi Konvensional Gedung Hiburan dan Olahraga`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `41019`, desc: `Konstruksi Konvensional Gedung Lainnya`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `41020`, desc: `Konstruksi Prapabrikasi Bangunan Gedung`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `42101`, desc: `Konstruksi Jalan pada Permukaan Tanah`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `42102`, desc: `Konstruksi Bangunan Sipil Jembatan, Jalan Layang, Fly Over, dan Underpass`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `42103`, desc: `Konstruksi Jalan Rel`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `42104`, desc: `Konstruksi Terowongan`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `42203`, desc: `Konstruksi Bangunan Sipil Sistem Pengolahan Limbah`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `42204`, desc: `Konstruksi Bangunan Sipil Elektrikal`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `42205`, desc: `Konstruksi Bangunan Sipil Telekomunikasi untuk Prasarana Transportasi`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `42206`, desc: `Konstruksi Sentral Telekomunikasi`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `42912`, desc: `Konstruksi Bangunan Pelabuhan Bukan Perikanan`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `43213`, desc: `Pemasangan Sistem Elektronika`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 1`, kbli: `46333`, desc: `Perdagangan Besar Minuman Beralkohol`, wage: 3394473.36, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `15201`, desc: `Industri Alas Kaki untuk Keperluan Sehari-Hari`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `22123`, desc: `Industri Karet Remah (Crumb Rubber)`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `22192`, desc: `Industri Barang dari Karet untuk Keperluan Industri`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `22194`, desc: `Industri Barang dari Karet untuk Kesehatan`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `22206`, desc: `Industri Barang dan Peralatan Teknik/Industri dari Plastik`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `22209`, desc: `Industri Barang Lainnya dari Plastik`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `25113`, desc: `Industri Produk Logam Struktural Baja untuk Konstruksi Berat`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `25119`, desc: `Industri Produk Logam Struktural Lainnya`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `25910`, desc: `Penempaan, Pengepresan, Pencetakan, dan Pembentukan Logam; Metalurgi Bubuk`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `26110`, desc: `Industri Sel Surya, Panel Surya, dan Inverter Fotovoltaik`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `26199`, desc: `Industri Komponen dan Papan Elektronik Lainnya YTDL`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `26490`, desc: `Industri Peralatan Audio dan Video Elektronik Lainnya`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `26513`, desc: `Industri Alat Ukur dan Alat Uji Elektronik`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `28173`, desc: `Industri Mesin Kantor dan Akuntansi Elektronik`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `30912`, desc: `Industri Komponen dan Perlengkapan Sepeda Motor Roda Dua dan Tiga`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 2`, kbli: `46741`, desc: `Perdagangan Besar Mineral Bukan Logam`, wage: 3386209.17, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `10729`, desc: `Industri Gula Lainnya`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `13111`, desc: `Persiapan Serat Tekstil`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `13929`, desc: `Industri Barang Tekstil Bukan Pakaian Jadi Lainnya`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `13999`, desc: `Industri Tekstil Lainnya YTDL`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `14131`, desc: `Industri Perlengkapan Pakaian dari Tekstil`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `15209`, desc: `Industri Alas Kaki Lainnya`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `20131`, desc: `Industri Damar Buatan (Resin Sintetis) dan Bahan Baku Plastik`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `22122`, desc: `Industri Karet Lembaran dan Crepe Rubber`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `22199`, desc: `Industri Barang Lainnya dari Karet YTDL`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `23119`, desc: `Industri Kaca Lainnya`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `23129`, desc: `Industri Produk Lainnya dari Kaca`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `23921`, desc: `Industri Batu Bata dari Tanah Liat atau Keramik`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `23932`, desc: `Industri Perlengkapan Rumah Tangga dari Tanah Liat atau Keramik`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `23939`, desc: `Industri Produk Bukan Bahan Bangunan Lainnya dari Tanah Liat atau Keramik dan Porselen`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `23954`, desc: `Industri Barang dari Asbes`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `23991`, desc: `Industri Produk Abrasif`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `23992`, desc: `Industri Batuan Aspal dan Barang dari Aspal atau Material Sejenis`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `23993`, desc: `Industri Produk Hasil Pemurnian Mineral Nonlogam`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `23999`, desc: `Industri Produk Mineral Nonlogam Lainnya YTDL`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `25111`, desc: `Industri Produk Logam Struktural Bukan Aluminium untuk Konstruksi Ringan`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` },
+          { group: `Sektor 3`, kbli: `25112`, desc: `Industri Produk Logam Struktural Aluminium untuk Konstruksi Ringan`, wage: 3377944.98, sk: `Nomor 709 Tahun 2026` }
+        ]
+      },
+      {
+        id: `lampung`,
+        name: `Lampung`,
+        region: `Sumatera`,
+        ump: 3285152.00,
+        skUmp: `Nomor G/666/V.08/HK/2026`,
+        skUmsp: `Nomor G/666/V.08/HK/2026`,
+        dateIso: `2026-11-20`,
+        dateDisplay: `20 Nov 2026`,
+        city: `Telukbetung`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `Berlaku bagi pekerja masa kerja kurang dari 1 tahun; wajib struktur dan skala upah untuk masa kerja 1 tahun atau lebih. Bagi Usaha Mikro dan Usaha Kecil disepakati minimal 50% dari nilai UMP.`,
+        umspSectors: [
+          {
+            group: `Kelapa Sawit & Minyak Mentah`,
+            kbli: `10434`,
+            desc: `Sektor Usaha Kelapa Sawit dan Pengelolaan Minyak Mentah (tertulis KLBI 10434 pada SK)`,
+            wage: 3350855.00,
+            sk: `Nomor G/666/V.08/HK/2026`
+          }
+        ]
+      },
+      {
+        id: `bengkulu`,
+        name: `Bengkulu`,
+        region: `Sumatera`,
+        ump: 3059085.47,
+        skUmp: `Nomor C.474.DKKTRANS Tahun 2026`,
+        skUmsp: null,
+        dateIso: `2026-11-20`,
+        dateDisplay: `20 Nov 2026`,
+        city: `Bengkulu`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `Ditetapkan dengan memperhatikan nilai tertinggi antara hasil formula penghitungan upah minimum atau nilai Kebutuhan Hidup Layak (KHL) yang disepakati Dewan Pengupahan. Mencabut SK UMP 2026 Nomor K.646.DKKTRANS.Tahun 2025.`,
+        umspSectors: []
+      },
+      {
+        id: `jawa-barat`,
+        name: `Jawa Barat`,
+        region: `Jawa`,
+        ump: 3000000.00,
+        skUmp: `Nomor 561/Kep.728-Kesra/2026`,
+        skUmsp: null,
+        dateIso: `2026-11-20`,
+        dateDisplay: `20 Nov 2026`,
+        city: `Bandung`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `Bagi Kabupaten/Kota yang tidak menetapkan UMK Tahun 2027, besaran UMK mengacu pada UMP Jawa Barat Tahun 2027. Perusahaan yang belum mampu memenuhi UMP dapat mengajukan permohonan perkecualian upah minimum kepada Gubernur.`,
+        umspSectors: []
+      },
+      {
+        id: `jawa-timur`,
+        name: `Jawa Timur`,
+        region: `Jawa`,
+        ump: 2730000.00,
+        skUmp: `Nomor 100.3.3.1/757/013/2026`,
+        skUmsp: null,
+        dateIso: `2026-11-21`,
+        dateDisplay: `21 Nov 2026`,
+        city: `Surabaya`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `Dalam hal Upah Minimum Kabupaten/Kota (UMK) telah ditetapkan, maka yang berlaku adalah UMK. Pengusaha dilarang membayar lebih rendah atau menurunkan upah yang sudah lebih tinggi dari ketentuan UMP.`,
+        umspSectors: []
+      },
+      {
+        id: `jawa-tengah`,
+        name: `Jawa Tengah`,
+        region: `Jawa`,
+        ump: 2655454.00,
+        skUmp: `Nomor 100.3.3.1/438 Tahun 2026`,
+        skUmsp: null,
+        dateIso: `2026-11-21`,
+        dateDisplay: `21 Nov 2026`,
+        city: `Semarang`,
+        effective: `Mulai 1 Januari 2027`,
+        notes: `Berlaku untuk seluruh Kabupaten/Kota di Jawa Tengah bagi pekerja masa kerja kurang dari 1 tahun. Pengusaha wajib berpedoman pada Struktur dan Skala Upah untuk masa kerja 1 tahun atau lebih. Mencabut SK Nomor 100.3.3.1/504 Tahun 2025.`,
+        umspSectors: []
+      },
+      {
+        id: `ntt`,
+        name: `Nusa Tenggara Timur`,
+        region: `Bali & Nusa Tenggara`,
+        ump: 2602441.00,
+        skUmp: `Nomor 421/KEP/HK/2026`,
+        skUmsp: null,
+        dateIso: `2026-11-19`,
+        dateDisplay: `19 Nov 2026`,
+        city: `Kupang`,
+        effective: `1 Januari – 31 Desember 2027`,
+        notes: `Berlaku bagi perusahaan dan usaha-usaha sosial milik swasta maupun pemerintah yang beroperasi di Provinsi NTT. Besaran UMP ini dikecualikan bagi perusahaan skala Usaha Mikro dan Kecil.`,
+        umspSectors: []
+      }
+    ];
+
+    // State
+    let chartMode = `level`;
+    let currentSort = { key: `ump`, dir: `desc` };
+    let expandedIds = new Set([`banten`]);
+    let bantenSectorFilter = `ALL`;
+    let bantenKbliSearch = ``;
+    let wageChartInstance = null;
+
+    // Formatting Helpers
+    function formatRupiah(val, withDecimals) {
+      if (val === null || val === undefined || isNaN(val)) return `-`;
+      const hasDec = withDecimals !== undefined ? withDecimals : (Math.abs(val % 1) > 0.001);
+      return `Rp` + Number(val).toLocaleString(`id-ID`, {
+        minimumFractionDigits: hasDec ? 2 : 0,
+        maximumFractionDigits: hasDec ? 2 : 0
+      });
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, `&amp;`)
+        .replace(/</g, `&lt;`)
+        .replace(/>/g, `&gt;`)
+        .replace(/"/g, `&quot;`);
+    }
+
+    function getCssToken(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    function getProvinceMaxUmsp(p) {
+      if (!p.umspSectors || p.umspSectors.length === 0) return null;
+      return Math.max.apply(null, p.umspSectors.map(function(s) { return s.wage; }));
+    }
+
+    function getProvinceMinUmsp(p) {
+      if (!p.umspSectors || p.umspSectors.length === 0) return null;
+      return Math.min.apply(null, p.umspSectors.map(function(s) { return s.wage; }));
+    }
+
+    function getFilteredProvinces() {
+      const searchEl = document.getElementById(`search-input`);
+      const regionEl = document.getElementById(`region-filter`);
+      const umspEl = document.getElementById(`umsp-filter`);
+
+      const q = searchEl ? searchEl.value.trim().toLowerCase() : ``;
+      const region = regionEl ? regionEl.value : `ALL`;
+      const umspStatus = umspEl ? umspEl.value : `ALL`;
+
+      const filtered = PROVINCES.filter(function(p) {
+        if (region !== `ALL` && p.region !== region) return false;
+        if (umspStatus === `HAS_UMSP` && p.umspSectors.length === 0) return false;
+        if (umspStatus === `UMP_ONLY` && p.umspSectors.length > 0) return false;
+        if (q) {
+          const hay = [
+            p.name,
+            p.region,
+            p.skUmp,
+            p.skUmsp || ``,
+            p.city,
+            p.notes
+          ].join(` `).toLowerCase();
+          const inMain = hay.indexOf(q) !== -1;
+          const inSectors = p.umspSectors.some(function(s) {
+            return (s.group + ` ` + s.kbli + ` ` + s.desc + ` ` + s.sk).toLowerCase().indexOf(q) !== -1;
+          });
+          if (!inMain && !inSectors) return false;
+        }
+        return true;
+      });
+
+      filtered.sort(function(a, b) {
+        const dir = currentSort.dir === `asc` ? 1 : -1;
+        if (currentSort.key === `ump`) {
+          return (a.ump - b.ump) * dir;
+        }
+        if (currentSort.key === `name`) {
+          return a.name.localeCompare(b.name, `id`) * dir;
+        }
+        if (currentSort.key === `date`) {
+          return (a.dateIso.localeCompare(b.dateIso) || (b.ump - a.ump)) * dir;
+        }
+        if (currentSort.key === `umsp`) {
+          const ua = getProvinceMaxUmsp(a) || 0;
+          const ub = getProvinceMaxUmsp(b) || 0;
+          return (ua - ub) * dir;
+        }
+        return 0;
+      });
+
+      return filtered;
+    }
+
+    function computeNationalStats() {
+      const total = PROVINCES.length;
+      const sum = PROVINCES.reduce(function(acc, p) { return acc + p.ump; }, 0);
+      const avg = sum / total;
+      const sortedVals = PROVINCES.map(function(p) { return p.ump; }).sort(function(a, b) { return a - b; });
+      const mid = Math.floor(sortedVals.length / 2);
+      const median = sortedVals.length % 2 !== 0 ? sortedVals[mid] : (sortedVals[mid - 1] + sortedVals[mid]) / 2;
+
+      let maxUmpProv = PROVINCES[0];
+      let minUmpProv = PROVINCES[0];
+      let maxUmspInfo = { prov: null, sector: null, wage: 0 };
+      let totalSectorEntries = 0;
+
+      PROVINCES.forEach(function(p) {
+        if (p.ump > maxUmpProv.ump) maxUmpProv = p;
+        if (p.ump < minUmpProv.ump) minUmpProv = p;
+        totalSectorEntries += p.umspSectors.length;
+        p.umspSectors.forEach(function(s) {
+          if (s.wage > maxUmspInfo.wage) {
+            maxUmspInfo = { prov: p, sector: s, wage: s.wage };
+          }
+        });
+      });
+
+      return {
+        total: total,
+        avg: avg,
+        median: median,
+        maxUmpProv: maxUmpProv,
+        minUmpProv: minUmpProv,
+        maxUmspInfo: maxUmspInfo,
+        totalSectorEntries: totalSectorEntries
+      };
+    }
+
+    function renderNationalKpis() {
+      const st = computeNationalStats();
+      const elTotal = document.getElementById(`kpi-total-prov`);
+      const elTotalSub = document.getElementById(`kpi-total-sub`);
+      const elMaxUmp = document.getElementById(`kpi-max-ump`);
+      const elMaxSub = document.getElementById(`kpi-max-sub`);
+      const elAvg = document.getElementById(`kpi-avg-ump`);
+      const elAvgSub = document.getElementById(`kpi-avg-sub`);
+      const elMaxUmsp = document.getElementById(`kpi-max-umsp`);
+      const elMaxUmspSub = document.getElementById(`kpi-max-umsp-sub`);
+
+      const umspProvCount = PROVINCES.filter(function(p) { return p.umspSectors.length > 0; }).length;
+      if (elTotal) elTotal.textContent = st.total + ` Provinsi`;
+      if (elTotalSub) {
+        elTotalSub.innerHTML = `<strong>18 SK Gubernur</strong> · ` + umspProvCount + ` provinsi menetapkan UMSP (` + st.totalSectorEntries + ` entri sektor/KBLI)`;
+      }
+      if (elMaxUmp) elMaxUmp.textContent = formatRupiah(st.maxUmpProv.ump, false);
+      if (elMaxSub) {
+        elMaxSub.innerHTML = `<strong>` + escapeHtml(st.maxUmpProv.name) + `</strong> · ` + escapeHtml(st.maxUmpProv.skUmp);
+      }
+      if (elAvg) elAvg.textContent = formatRupiah(Math.round(st.avg), false);
+      if (elAvgSub) {
+        elAvgSub.innerHTML = `Median <strong>` + formatRupiah(Math.round(st.median), false) + `</strong> · Terendah ` + escapeHtml(st.minUmpProv.name) + ` ` + formatRupiah(st.minUmpProv.ump, false);
+      }
+      if (elMaxUmsp && st.maxUmspInfo.prov) {
+        const pct = (((st.maxUmspInfo.wage - st.maxUmspInfo.prov.ump) / st.maxUmspInfo.prov.ump) * 100).toFixed(2).replace(`.`, `,`);
+        elMaxUmsp.textContent = formatRupiah(st.maxUmspInfo.wage, false);
+        if (elMaxUmspSub) {
+          elMaxUmspSub.innerHTML = `<strong>` + escapeHtml(st.maxUmspInfo.prov.name) + `</strong> — ` + escapeHtml(st.maxUmspInfo.sector.group) + ` (+` + pct + `% vs UMP)`;
+        }
+      }
+    }
+
+    function renderFilterStatus(filtered) {
+      const summaryEl = document.getElementById(`filter-summary-text`);
+      const subsetEl = document.getElementById(`subset-stats-text`);
+      if (summaryEl) {
+        summaryEl.innerHTML = `Menampilkan <strong>` + filtered.length + `</strong> dari ` + PROVINCES.length + ` provinsi`;
+      }
+      if (subsetEl) {
+        if (filtered.length === 0) {
+          subsetEl.textContent = `Tidak ada provinsi yang cocok dengan kriteria filter.`;
+        } else {
+          const sum = filtered.reduce(function(acc, p) { return acc + p.ump; }, 0);
+          const avg = sum / filtered.length;
+          const max = Math.max.apply(null, filtered.map(function(p) { return p.ump; }));
+          const min = Math.min.apply(null, filtered.map(function(p) { return p.ump; }));
+          subsetEl.innerHTML = `Rata-rata tampilan aktif: <span class="mono-val">` + formatRupiah(Math.round(avg), false) + `</span> · Rentang: <span class="mono-val">` + formatRupiah(Math.round(min), false) + ` – ` + formatRupiah(Math.round(max), false) + `</span>`;
+        }
+      }
+    }
+
+    function renderRegionBreakdown() {
+      const container = document.getElementById(`region-breakdown-list`);
+      if (!container) return;
+
+      const regionEl = document.getElementById(`region-filter`);
+      const activeRegion = regionEl ? regionEl.value : `ALL`;
+      const regionsOrder = [`Bali & Nusa Tenggara`, `Sulawesi`, `Kalimantan`, `Sumatera`, `Jawa`];
+      const maxRegionAvg = 4600000;
+
+      const html = regionsOrder.map(function(reg) {
+        const items = PROVINCES.filter(function(p) { return p.region === reg; });
+        const avg = items.reduce(function(acc, p) { return acc + p.ump; }, 0) / items.length;
+        const umspCount = items.filter(function(p) { return p.umspSectors.length > 0; }).length;
+        const widthPct = Math.min(100, Math.round((avg / maxRegionAvg) * 100));
+        const isActive = activeRegion === reg;
+
+        return `
+          <button type="button" class="region-btn` + (isActive ? ` active` : ``) + `" onclick="toggleRegionQuickFilter('` + reg + `')">
+            <div class="region-btn-top">
+              <span class="region-name">` + escapeHtml(reg) + `</span>
+              <span class="region-avg">` + formatRupiah(Math.round(avg), false) + `</span>
+            </div>
+            <div class="region-bar-track">
+              <div class="region-bar-fill" style="width: ` + widthPct + `%;"></div>
+            </div>
+            <div class="region-meta">` + items.length + ` provinsi · ` + umspCount + ` provinsi ber-UMSP</div>
+          </button>
+        `;
+      }).join(``);
+
+      container.innerHTML = html;
+    }
+
+    function renderUmspQuickList() {
+      const container = document.getElementById(`umsp-quick-list`);
+      if (!container) return;
+      const umspProvs = PROVINCES.filter(function(p) { return p.umspSectors.length > 0; })
+        .sort(function(a, b) { return getProvinceMaxUmsp(b) - getProvinceMaxUmsp(a); });
+
+      const html = umspProvs.map(function(p) {
+        const maxU = getProvinceMaxUmsp(p);
+        const minU = getProvinceMinUmsp(p);
+        const pct = (((maxU - p.ump) / p.ump) * 100).toFixed(2).replace(`.`, `,`);
+        const rangeStr = minU !== maxU
+          ? formatRupiah(minU, false) + ` – ` + formatRupiah(maxU, false)
+          : formatRupiah(maxU, false);
+
+        return `
+          <button type="button" class="umsp-quick-item" onclick="focusProvinceRow('` + p.id + `')">
+            <div>
+              <span class="umsp-quick-prov">` + escapeHtml(p.name) + `</span>
+              <span class="umsp-quick-count">` + p.umspSectors.length + ` entri sektor/KBLI · +` + pct + `% maks</span>
+            </div>
+            <div class="umsp-quick-val">` + rangeStr + `</div>
+          </button>
+        `;
+      }).join(``);
+
+      container.innerHTML = html;
+    }
+
+    function renderChart(filtered) {
+      const canvas = document.getElementById(`wageChart`);
+      const container = document.getElementById(`chart-container`);
+      const emptyEl = document.getElementById(`chart-empty`);
+      const headingEl = document.getElementById(`chart-heading`);
+      const subEl = document.getElementById(`chart-subheading`);
+      const legendEl = document.getElementById(`chart-legend`);
+
+      if (!canvas || !container) return;
+
+      const datasetSource = chartMode === `premium`
+        ? filtered.filter(function(p) { return p.umspSectors.length > 0; })
+        : filtered;
+
+      if (datasetSource.length === 0) {
+        container.style.display = `none`;
+        if (emptyEl) emptyEl.style.display = `block`;
+        if (wageChartInstance) {
+          wageChartInstance.destroy();
+          wageChartInstance = null;
+        }
+        return;
+      }
+
+      container.style.display = `block`;
+      if (emptyEl) emptyEl.style.display = `none`;
+
+      const rowHeight = chartMode === `level` ? 36 : 48;
+      const computedMinHeight = Math.max(320, datasetSource.length * rowHeight + 80);
+      container.style.minHeight = computedMinHeight + `px`;
+      container.style.height = computedMinHeight + `px`;
+
+      const data1 = getCssToken(`--data-1`);
+      const data2 = getCssToken(`--data-2`);
+      const data3 = getCssToken(`--data-3`);
+      const data4 = getCssToken(`--data-4`);
+      const textCol = getCssToken(`--on-surface`);
+      const mutedCol = getCssToken(`--on-surface-variant`);
+      const gridCol = getCssToken(`--outline-variant`);
+      const fontLabel = getCssToken(`--font-label`);
+
+      const nationalAvg = computeNationalStats().avg;
+
+      if (wageChartInstance) {
+        wageChartInstance.destroy();
+        wageChartInstance = null;
+      }
+
+      if (chartMode === `level`) {
+        if (headingEl) headingEl.textContent = `Perbandingan UMP & UMSP Tertinggi per Provinsi (2027)`;
+        if (subEl) subEl.textContent = `Satuan Rupiah per bulan · Garis putus-putus menunjukkan rata-rata UMP 15 provinsi (` + formatRupiah(Math.round(nationalAvg), false) + `)`;
+        if (legendEl) legendEl.style.display = `flex`;
+
+        const labels = datasetSource.map(function(p) { return p.name; });
+        const umpData = datasetSource.map(function(p) { return p.ump; });
+        const umspData = datasetSource.map(function(p) { return getProvinceMaxUmsp(p); });
+
+        const avgLinePlugin = {
+          id: `avgLinePlugin`,
+          afterDatasetsDraw: function(chart) {
+            const xScale = chart.scales.x;
+            const yScale = chart.scales.y;
+            if (!xScale || !yScale) return;
+            const xPos = xScale.getPixelForValue(nationalAvg);
+            const ctx = chart.ctx;
+            ctx.save();
+            ctx.beginPath();
+            ctx.setLineDash([5, 4]);
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = data4;
+            ctx.moveTo(xPos, yScale.top);
+            ctx.lineTo(xPos, yScale.bottom);
+            ctx.stroke();
+            ctx.fillStyle = data4;
+            ctx.font = `600 11px ` + fontLabel;
+            ctx.textAlign = `left`;
+            ctx.fillText(`Rata-rata: ` + formatRupiah(Math.round(nationalAvg), false), xPos + 6, yScale.top + 12);
+            ctx.restore();
+          }
+        };
+
+        wageChartInstance = new Chart(canvas.getContext(`2d`), {
+          type: `bar`,
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: `UMP 2027`,
+                data: umpData,
+                backgroundColor: data1,
+                borderRadius: 2,
+                barPercentage: 0.78,
+                categoryPercentage: 0.78
+              },
+              {
+                label: `UMSP Tertinggi`,
+                data: umspData,
+                backgroundColor: data2,
+                borderRadius: 2,
+                barPercentage: 0.78,
+                categoryPercentage: 0.78
+              }
+            ]
+          },
+          options: {
+            indexAxis: `y`,
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: function(evt, elements) {
+              if (elements && elements.length > 0) {
+                const idx = elements[0].index;
+                const prov = datasetSource[idx];
+                if (prov) focusProvinceRow(prov.id);
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    if (ctx.raw === null || ctx.raw === undefined) return null;
+                    return ctx.dataset.label + `: ` + formatRupiah(ctx.raw, true);
+                  },
+                  afterBody: function(items) {
+                    if (!items || !items.length) return ``;
+                    const p = datasetSource[items[0].dataIndex];
+                    return `SK: ` + p.skUmp + ` (` + p.dateDisplay + `)`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                grid: { color: gridCol },
+                ticks: {
+                  color: mutedCol,
+                  font: { family: fontLabel, size: 11 },
+                  callback: function(val) {
+                    return `Rp` + (val / 1000000).toFixed(1).replace(`.`, `,`) + ` jt`;
+                  }
+                }
+              },
+              y: {
+                grid: { display: false },
+                ticks: {
+                  color: textCol,
+                  font: { size: 12, weight: `600` }
+                }
+              }
+            }
+          },
+          plugins: [avgLinePlugin]
+        });
+      } else {
+        if (headingEl) headingEl.textContent = `Premi Tarif UMSP Tertinggi di Atas UMP (%) — 7 Provinsi`;
+        if (subEl) subEl.textContent = `Persentase selisih tarif UMSP tertinggi terhadap UMP provinsi masing-masing`;
+        if (legendEl) legendEl.style.display = `none`;
+
+        const sortedPrem = datasetSource.slice().sort(function(a, b) {
+          const pa = ((getProvinceMaxUmsp(a) - a.ump) / a.ump) * 100;
+          const pb = ((getProvinceMaxUmsp(b) - b.ump) / b.ump) * 100;
+          return pb - pa;
+        });
+
+        const labels = sortedPrem.map(function(p) { return p.name; });
+        const pctData = sortedPrem.map(function(p) {
+          return Number((((getProvinceMaxUmsp(p) - p.ump) / p.ump) * 100).toFixed(2));
+        });
+
+        wageChartInstance = new Chart(canvas.getContext(`2d`), {
+          type: `bar`,
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: `Premi UMSP di Atas UMP (%)`,
+                data: pctData,
+                backgroundColor: data3,
+                borderRadius: 2,
+                barThickness: 22
+              }
+            ]
+          },
+          options: {
+            indexAxis: `y`,
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: function(evt, elements) {
+              if (elements && elements.length > 0) {
+                const idx = elements[0].index;
+                const prov = sortedPrem[idx];
+                if (prov) focusProvinceRow(prov.id);
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    const p = sortedPrem[ctx.dataIndex];
+                    const maxU = getProvinceMaxUmsp(p);
+                    const diff = maxU - p.ump;
+                    return `+` + String(ctx.raw).replace(`.`, `,`) + `% (+` + formatRupiah(diff, true) + `)`;
+                  },
+                  afterBody: function(items) {
+                    const p = sortedPrem[items[0].dataIndex];
+                    return `UMP: ` + formatRupiah(p.ump, false) + ` → UMSP Maks: ` + formatRupiah(getProvinceMaxUmsp(p), false);
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                grid: { color: gridCol },
+                ticks: {
+                  color: mutedCol,
+                  font: { family: fontLabel, size: 11 },
+                  callback: function(val) { return `+` + val + `%`; }
+                }
+              },
+              y: {
+                grid: { display: false },
+                ticks: {
+                  color: textCol,
+                  font: { size: 12, weight: `600` }
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function buildDetailDrawerHtml(p) {
+      const skUmspDisplay = p.skUmsp ? p.skUmsp : `Tidak tercantum pada SK UMP ini`;
+      let sectorsBlock = ``;
+
+      if (p.umspSectors.length === 0) {
+        sectorsBlock = `
+          <div class="detail-sectors-box">
+            <div class="detail-sectors-head">
+              <h4 class="detail-sectors-title">Status Upah Minimum Sektoral Provinsi (UMSP)</h4>
+              <span class="tag tag-ump-only">Hanya UMP</span>
+            </div>
+            <p style="margin: 0; font-size: 0.875rem; color: var(--on-surface-variant);">
+              Berkas SK Gubernur untuk Provinsi ` + escapeHtml(p.name) + ` (` + escapeHtml(p.skUmp) + `) hanya memuat penetapan Upah Minimum Provinsi (UMP) Tahun 2027 tanpa lampiran tarif UMSP.
+            </p>
+          </div>
+        `;
+      } else if (p.id === `banten`) {
+        const secSummary = [
+          { label: `Sektor 1 (46 KBLI)`, val: 3394473.36, key: `Sektor 1` },
+          { label: `Sektor 2 (16 KBLI)`, val: 3386209.17, key: `Sektor 2` },
+          { label: `Sektor 3 (21 KBLI)`, val: 3377944.98, key: `Sektor 3` }
+        ];
+        const q = bantenKbliSearch.trim().toLowerCase();
+        const visibleBanten = p.umspSectors.filter(function(s) {
+          if (bantenSectorFilter !== `ALL` && s.group !== bantenSectorFilter) return false;
+          if (q && (s.kbli + ` ` + s.desc + ` ` + s.group).toLowerCase().indexOf(q) === -1) return false;
+          return true;
+        });
+
+        const summaryCards = secSummary.map(function(sc) {
+          const diff = sc.val - p.ump;
+          const pct = ((diff / p.ump) * 100).toFixed(2).replace(`.`, `,`);
+          return `
+            <div class="detail-meta-item" style="border-left: 3px solid var(--data-2); padding-left: 0.65rem;">
+              <span class="meta-k">` + sc.label + `</span>
+              <span class="meta-v" style="font-family: var(--font-label); font-variant-numeric: tabular-nums;">` + formatRupiah(sc.val, true) + `</span>
+              <span class="sk-sub">+` + formatRupiah(diff, true) + ` (+` + pct + `%) vs UMP</span>
+            </div>
+          `;
+        }).join(``);
+
+        const rowsHtml = visibleBanten.map(function(s) {
+          const diff = s.wage - p.ump;
+          const pct = ((diff / p.ump) * 100).toFixed(2).replace(`.`, `,`);
+          return `
+            <tr>
+              <td><span class="tag tag-umsp">` + escapeHtml(s.group) + `</span></td>
+              <td style="font-family: var(--font-label); font-weight: 600;">` + escapeHtml(s.kbli) + `</td>
+              <td>` + escapeHtml(s.desc) + `</td>
+              <td class="num money-val">` + formatRupiah(s.wage, true) + `</td>
+              <td class="num" style="font-family: var(--font-label); color: var(--positive);">+` + pct + `%</td>
+            </tr>
+          `;
+        }).join(``);
+
+        sectorsBlock = `
+          <div class="detail-sectors-box">
+            <div class="detail-sectors-head">
+              <h4 class="detail-sectors-title">Rincian Pengelompokan UMSP Banten 2027 (SK No. 709 Tahun 2026 — 83 KBLI)</h4>
+              <span class="tag tag-umsp">3 Kelompok Sektor</span>
+            </div>
+            <div class="detail-meta-grid" style="margin-bottom: var(--space-md);">
+              ` + summaryCards + `
+            </div>
+            <div class="banten-tools">
+              <div class="field-group" style="flex: 1 1 220px;">
+                <label for="banten-kbli-search" class="field-label">Filter KBLI / Sektor di Banten</label>
+                <input id="banten-kbli-search" type="search" class="input-control" style="min-height: 38px;" value="` + escapeHtml(bantenKbliSearch) + `" placeholder="Cari kode KBLI atau bidang usaha…" oninput="handleBantenSearch(this.value)">
+              </div>
+              <div class="field-group">
+                <span class="field-label">Kelompok Sektor</span>
+                <div class="btn-segmented-group">
+                  <button type="button" class="btn-seg` + (bantenSectorFilter === `ALL` ? ` active` : ``) + `" onclick="setBantenSectorFilter('ALL')">Semua (83)</button>
+                  <button type="button" class="btn-seg` + (bantenSectorFilter === `Sektor 1` ? ` active` : ``) + `" onclick="setBantenSectorFilter('Sektor 1')">Sektor 1 (46)</button>
+                  <button type="button" class="btn-seg` + (bantenSectorFilter === `Sektor 2` ? ` active` : ``) + `" onclick="setBantenSectorFilter('Sektor 2')">Sektor 2 (16)</button>
+                  <button type="button" class="btn-seg` + (bantenSectorFilter === `Sektor 3` ? ` active` : ``) + `" onclick="setBantenSectorFilter('Sektor 3')">Sektor 3 (21)</button>
+                </div>
+              </div>
+            </div>
+            <div class="kbli-scroll-box">
+              <table class="inner-sector-table">
+                <thead>
+                  <tr>
+                    <th>Kelompok</th>
+                    <th>Kode KBLI</th>
+                    <th>Uraian Kelompok Lapangan Usaha</th>
+                    <th class="num">UMSP 2027</th>
+                    <th class="num">Premi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ` + (rowsHtml || `<tr><td colspan="5" style="text-align: center; padding: 1rem; color: var(--on-surface-variant);">Tidak ada KBLI Banten yang cocok dengan pencarian tersebut.</td></tr>`) + `
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      } else {
+        const rowsHtml = p.umspSectors.map(function(s) {
+          const diff = s.wage - p.ump;
+          const pct = ((diff / p.ump) * 100).toFixed(2).replace(`.`, `,`);
+          return `
+            <tr>
+              <td><span class="tag tag-umsp">` + escapeHtml(s.group) + `</span></td>
+              <td style="font-family: var(--font-label); font-weight: 600;">` + escapeHtml(s.kbli) + `</td>
+              <td>` + escapeHtml(s.desc) + `</td>
+              <td class="num money-val">` + formatRupiah(s.wage, true) + `</td>
+              <td class="num" style="font-family: var(--font-label); color: var(--positive);">+` + formatRupiah(diff, true) + ` (+` + pct + `%)</td>
+              <td style="font-family: var(--font-label); font-size: 0.78rem;">` + escapeHtml(s.sk) + `</td>
+            </tr>
+          `;
+        }).join(``);
+
+        sectorsBlock = `
+          <div class="detail-sectors-box">
+            <div class="detail-sectors-head">
+              <h4 class="detail-sectors-title">Rincian Sektor UMSP ` + escapeHtml(p.name) + ` Tahun 2027</h4>
+              <span class="tag tag-umsp">` + p.umspSectors.length + ` Entri Sektor/KBLI</span>
+            </div>
+            <div class="kbli-scroll-box">
+              <table class="inner-sector-table">
+                <thead>
+                  <tr>
+                    <th>Sektor</th>
+                    <th>Kode KBLI</th>
+                    <th>Uraian Sektor / Sub Sektor</th>
+                    <th class="num">Tarif UMSP 2027</th>
+                    <th class="num">Selisih vs UMP</th>
+                    <th>SK Rujukan</th>
+                  </tr>
+                </thead>
+                <tbody>` + rowsHtml + `</tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="detail-drawer">
+          <div class="detail-meta-grid">
+            <div class="detail-meta-item">
+              <span class="meta-k">SK Penetapan UMP 2027</span>
+              <span class="meta-v">` + escapeHtml(p.skUmp) + `</span>
+            </div>
+            <div class="detail-meta-item">
+              <span class="meta-k">SK Penetapan UMSP 2027</span>
+              <span class="meta-v">` + escapeHtml(skUmspDisplay) + `</span>
+            </div>
+            <div class="detail-meta-item">
+              <span class="meta-k">Tempat &amp; Tanggal Penetapan</span>
+              <span class="meta-v">` + escapeHtml(p.city) + `, ` + escapeHtml(p.dateDisplay) + `</span>
+            </div>
+            <div class="detail-meta-item">
+              <span class="meta-k">Masa Berlaku</span>
+              <span class="meta-v">` + escapeHtml(p.effective) + `</span>
+            </div>
+          </div>
+
+          <div class="detail-notes">
+            <strong>Ketentuan Pokok SK:</strong> ` + escapeHtml(p.notes) + `
+          </div>
+
+          ` + sectorsBlock + `
+        </div>
+      `;
+    }
+
+    function renderTable(filtered) {
+      const tbody = document.getElementById(`province-table-body`);
+      const toggleAllBtn = document.getElementById(`toggle-expand-all-btn`);
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">
+                <p>Tidak ditemukan provinsi atau SK yang cocok dengan kata kunci maupun filter yang dipilih.</p>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="resetAllFilters()">Reset Semua Filter</button>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      const allVisibleExpanded = filtered.every(function(p) { return expandedIds.has(p.id); });
+      if (toggleAllBtn) {
+        toggleAllBtn.textContent = allVisibleExpanded ? `Tutup Semua Rincian` : `Buka Semua Rincian`;
+      }
+
+      const rowsHtml = filtered.map(function(p, idx) {
+        const isExpanded = expandedIds.has(p.id);
+        const numStr = String(idx + 1).padStart(2, `0`);
+        const maxU = getProvinceMaxUmsp(p);
+        const minU = getProvinceMinUmsp(p);
+
+        let umspCell = `<span class="tag tag-ump-only">Hanya UMP</span>`;
+        if (p.umspSectors.length > 0) {
+          const rangeText = minU !== maxU
+            ? formatRupiah(minU, true) + ` – ` + formatRupiah(maxU, true)
+            : formatRupiah(maxU, true);
+          const pctMax = (((maxU - p.ump) / p.ump) * 100).toFixed(2).replace(`.`, `,`);
+          umspCell = `
+            <span class="tag tag-positive">` + p.umspSectors.length + ` Entri UMSP (+` + pctMax + `%)</span>
+            <span class="sk-sub" style="font-family: var(--font-label); margin-top: 4px;">` + rangeText + `</span>
+          `;
+        }
+
+        const skInfo = p.skUmsp && p.skUmsp !== p.skUmp
+          ? `<span class="sk-code">` + escapeHtml(p.skUmp) + `</span><span class="sk-sub">UMSP: ` + escapeHtml(p.skUmsp) + `</span>`
+          : `<span class="sk-code">` + escapeHtml(p.skUmp) + `</span><span class="sk-sub">` + escapeHtml(p.city) + `</span>`;
+
+        const mainRow = `
+          <tr class="prov-row` + (isExpanded ? ` expanded` : ``) + `" id="row-` + p.id + `">
+            <td><span class="index-num">` + numStr + `</span></td>
+            <td>
+              <span class="prov-name">` + escapeHtml(p.name) + `</span>
+              <span class="prov-region">` + escapeHtml(p.region) + `</span>
+            </td>
+            <td class="num"><span class="money-val">` + formatRupiah(p.ump, true) + `</span></td>
+            <td>` + umspCell + `</td>
+            <td>` + skInfo + `</td>
+            <td style="white-space: nowrap;">
+              <span style="font-family: var(--font-label); font-size: 0.82rem;">` + escapeHtml(p.dateDisplay) + `</span>
+              <span class="sk-sub">` + escapeHtml(p.effective) + `</span>
+            </td>
+            <td style="text-align: right;">
+              <button type="button" class="btn btn-secondary btn-sm" aria-expanded="` + (isExpanded ? `true` : `false`) + `" onclick="toggleRowExpand('` + p.id + `')">
+                ` + (isExpanded ? `Tutup` : `Rincian`) + `
+              </button>
+            </td>
+          </tr>
+        `;
+
+        if (isExpanded) {
+          return mainRow + `<tr class="detail-row"><td colspan="7">` + buildDetailDrawerHtml(p) + `</td></tr>`;
+        }
+        return mainRow;
+      }).join(``);
+
+      tbody.innerHTML = rowsHtml;
+    }
+
+    function renderKbliDirectory() {
+      const tbody = document.getElementById(`kbli-directory-body`);
+      const countEl = document.getElementById(`kbli-count-label`);
+      const searchEl = document.getElementById(`kbli-search-input`);
+      const provEl = document.getElementById(`kbli-prov-filter`);
+      if (!tbody) return;
+
+      const q = searchEl ? searchEl.value.trim().toLowerCase() : ``;
+      const provFilter = provEl ? provEl.value : `ALL`;
+
+      const entries = [];
+      PROVINCES.forEach(function(p) {
+        if (p.umspSectors.length === 0) return;
+        p.umspSectors.forEach(function(s) {
+          entries.push({
+            provId: p.id,
+            provName: p.name,
+            ump: p.ump,
+            group: s.group,
+            kbli: s.kbli,
+            desc: s.desc,
+            wage: s.wage,
+            sk: s.sk
+          });
+        });
+      });
+
+      const filtered = entries.filter(function(e) {
+        if (provFilter !== `ALL` && e.provId !== provFilter) return false;
+        if (q) {
+          const hay = (e.provName + ` ` + e.group + ` ` + e.kbli + ` ` + e.desc + ` ` + e.sk).toLowerCase();
+          if (hay.indexOf(q) === -1) return false;
+        }
+        return true;
+      });
+
+      if (countEl) {
+        countEl.textContent = `Menampilkan ` + filtered.length + ` dari ` + entries.length + ` entri sektor/KBLI`;
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 1.5rem; color: var(--on-surface-variant);">Tidak ada sektor UMSP atau kode KBLI yang cocok dengan pencarian Anda.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(function(e) {
+        const diff = e.wage - e.ump;
+        const pct = ((diff / e.ump) * 100).toFixed(2).replace(`.`, `,`);
+        return `
+          <tr>
+            <td style="font-weight: 600; white-space: nowrap;">` + escapeHtml(e.provName) + `</td>
+            <td><span class="tag tag-umsp">` + escapeHtml(e.group) + `</span></td>
+            <td style="font-family: var(--font-label); font-weight: 600; white-space: nowrap;">` + escapeHtml(e.kbli) + `</td>
+            <td>` + escapeHtml(e.desc) + `</td>
+            <td class="num money-val">` + formatRupiah(e.wage, true) + `</td>
+            <td class="num" style="font-family: var(--font-label); color: var(--positive); white-space: nowrap;">+` + formatRupiah(diff, false) + ` (+` + pct + `%)</td>
+            <td style="font-family: var(--font-label); font-size: 0.78rem; white-space: nowrap;">` + escapeHtml(e.sk) + `</td>
+          </tr>
+        `;
+      }).join(``);
+    }
+
+    function updateSortHeaderButtons() {
+      const map = {
+        name: { id: `sort-th-name`, label: `Provinsi & Wilayah` },
+        ump: { id: `sort-th-ump`, label: `UMP 2027 (Rp/Bln)` },
+        date: { id: `sort-th-date`, label: `Tgl Penetapan` }
+      };
+      Object.keys(map).forEach(function(k) {
+        const btn = document.getElementById(map[k].id);
+        if (!btn) return;
+        const isActive = currentSort.key === k;
+        btn.classList.toggle(`active`, isActive);
+        const arrow = isActive ? (currentSort.dir === `asc` ? `↑` : `↓`) : `↕`;
+        btn.innerHTML = map[k].label + ` <span aria-hidden="true">` + arrow + `</span>`;
+      });
+    }
+
+    function renderAll() {
+      const filtered = getFilteredProvinces();
+      renderFilterStatus(filtered);
+      renderRegionBreakdown();
+      renderChart(filtered);
+      renderTable(filtered);
+      updateSortHeaderButtons();
+    }
+
+    // Event Handlers (hoisted function declarations)
+    function handleFilterChange() {
+      renderAll();
+    }
+
+    function handleSortSelectChange() {
+      const sel = document.getElementById(`sort-select`);
+      if (!sel) return;
+      const parts = sel.value.split(`-`);
+      currentSort = { key: parts[0], dir: parts[1] };
+      renderAll();
+    }
+
+    function sortByColumn(col) {
+      if (currentSort.key === col) {
+        currentSort.dir = currentSort.dir === `desc` ? `asc` : `desc`;
+      } else {
+        currentSort.key = col;
+        currentSort.dir = col === `name` || col === `date` ? `asc` : `desc`;
+      }
+      const sel = document.getElementById(`sort-select`);
+      if (sel) {
+        const candidate = currentSort.key + `-` + currentSort.dir;
+        const hasOption = Array.from(sel.options).some(function(o) { return o.value === candidate; });
+        if (hasOption) sel.value = candidate;
+      }
+      renderAll();
+    }
+
+    function toggleRegionQuickFilter(reg) {
+      const regionEl = document.getElementById(`region-filter`);
+      if (!regionEl) return;
+      regionEl.value = regionEl.value === reg ? `ALL` : reg;
+      renderAll();
+    }
+
+    function setChartMode(mode) {
+      chartMode = mode;
+      const btnLevel = document.getElementById(`mode-btn-level`);
+      const btnPrem = document.getElementById(`mode-btn-premium`);
+      if (btnLevel) btnLevel.classList.toggle(`active`, mode === `level`);
+      if (btnPrem) btnPrem.classList.toggle(`active`, mode === `premium`);
+      renderChart(getFilteredProvinces());
+    }
+
+    function toggleRowExpand(id) {
+      if (expandedIds.has(id)) {
+        expandedIds.delete(id);
+      } else {
+        expandedIds.add(id);
+      }
+      renderTable(getFilteredProvinces());
+    }
+
+    function toggleExpandAll() {
+      const filtered = getFilteredProvinces();
+      const allOpen = filtered.every(function(p) { return expandedIds.has(p.id); });
+      if (allOpen) {
+        filtered.forEach(function(p) { expandedIds.delete(p.id); });
+      } else {
+        filtered.forEach(function(p) { expandedIds.add(p.id); });
+      }
+      renderTable(filtered);
+    }
+
+    function focusProvinceRow(id) {
+      expandedIds.add(id);
+      const filtered = getFilteredProvinces();
+      const visible = filtered.some(function(p) { return p.id === id; });
+      if (!visible) {
+        resetAllFilters();
+        expandedIds.add(id);
+        renderAll();
+      } else {
+        renderTable(filtered);
+      }
+      const row = document.getElementById(`row-` + id);
+      if (row) {
+        row.scrollIntoView({ behavior: `smooth`, block: `center` });
+      }
+    }
+
+    function setBantenSectorFilter(sector) {
+      bantenSectorFilter = sector;
+      renderTable(getFilteredProvinces());
+    }
+
+    function handleBantenSearch(val) {
+      bantenKbliSearch = val;
+      renderTable(getFilteredProvinces());
+      const input = document.getElementById(`banten-kbli-search`);
+      if (input) {
+        input.focus();
+        input.setSelectionRange(val.length, val.length);
+      }
+    }
+
+    function resetAllFilters() {
+      const searchEl = document.getElementById(`search-input`);
+      const regionEl = document.getElementById(`region-filter`);
+      const umspEl = document.getElementById(`umsp-filter`);
+      const sortEl = document.getElementById(`sort-select`);
+      if (searchEl) searchEl.value = ``;
+      if (regionEl) regionEl.value = `ALL`;
+      if (umspEl) umspEl.value = `ALL`;
+      if (sortEl) sortEl.value = `ump-desc`;
+      currentSort = { key: `ump`, dir: `desc` };
+      renderAll();
+    }
+
+    function resetKbliDirectory() {
+      const searchEl = document.getElementById(`kbli-search-input`);
+      const provEl = document.getElementById(`kbli-prov-filter`);
+      if (searchEl) searchEl.value = ``;
+      if (provEl) provEl.value = `ALL`;
+      renderKbliDirectory();
+    }
+
+    document.addEventListener(`DOMContentLoaded`, function() {
+      renderNationalKpis();
+      renderUmspQuickList();
+      renderAll();
+      renderKbliDirectory();
+    });
+  </script>
+</body>
+</html>
