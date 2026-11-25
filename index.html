@@ -1317,13 +1317,12 @@
         <div class="dossier-bar">
           <div class="dossier-bar-left">
             <span class="dossier-pill">03 · INDEKS SEKTORAL</span>
-            <span class="dossier-meta"
-              >PENJELAJAH TARIF UMSP &amp; KODE KBLI LINTAS PROVINSI (104
-              ENTRI)</span
+            <span class="dossier-meta" id="kbli-section-meta"
+              >PENJELAJAH TARIF UMSP &amp; KODE KBLI LINTAS PROVINSI</span
             >
           </div>
-          <span class="dossier-meta"
-            >7 PROVINSI · KBLI 5 DIGIT &amp; KELOMPOK SEKTOR</span
+          <span class="dossier-meta" id="kbli-section-count"
+            >KBLI 5 DIGIT &amp; KELOMPOK SEKTOR</span
           >
         </div>
 
@@ -1360,20 +1359,7 @@
                 class="select-control"
                 onchange="renderKbliDirectory()"
               >
-                <option value="ALL">Semua 7 Provinsi UMSP (104 entri)</option>
-                <option value="banten">Banten (83 KBLI · 3 Sektor)</option>
-                <option value="riau">Riau (9 KBLI · 2 SK Sektor)</option>
-                <option value="kalimantan-tengah">
-                  Kalimantan Tengah (6 KBLI)
-                </option>
-                <option value="sulawesi-selatan">
-                  Sulawesi Selatan (3 Sektor KBLI 5-Digit)
-                </option>
-                <option value="bali">Bali (1 Sektor)</option>
-                <option value="bangka-belitung">
-                  Kep. Bangka Belitung (1 Sektor)
-                </option>
-                <option value="lampung">Lampung (1 Sektor · KBLI 10434)</option>
+                <option value="ALL">Semua Provinsi UMSP</option>
               </select>
             </div>
 
@@ -2463,21 +2449,6 @@
               sk: "Nomor 688/KEP.GUB/DISNAKERTRANS-3.3/2026",
             },
           ],
-        },
-        {
-          id: "jawa-timur",
-          name: "Jawa Timur",
-          region: "Jawa",
-          ump: 2730000.0,
-          skUmp: "Nomor 100.3.3.1/757/013/2026",
-          skUmsp: null,
-          dateIso: "2026-11-21",
-          dateDisplay: "21 Nov 2026",
-          city: "Surabaya",
-          effective: "Mulai 1 Januari 2027",
-          notes:
-            "Berlaku bagi pekerja/buruh dengan masa kerja kurang dari 1 tahun. Pengusaha dilarang membayar upah lebih rendah dan dilarang menurunkan upah yang sudah lebih tinggi. Dalam hal UMK telah ditetapkan, yang berlaku adalah UMK.",
-          umspSectors: [],
         },
         {
           id: "kalimantan-timur",
@@ -3939,7 +3910,10 @@
           });
         } else {
           if (headingEl)
-            headingEl.textContent = `Premi Tarif UMSP Tertinggi di Atas UMP (%) — 7 Provinsi`;
+            headingEl.textContent =
+              `Premi Tarif UMSP Tertinggi di Atas UMP (%) — ` +
+              datasetSource.length +
+              ` Provinsi`;
           if (subEl)
             subEl.textContent = `Persentase selisih tarif UMSP tertinggi terhadap UMP provinsi masing-masing`;
           if (legendEl) legendEl.style.display = `none`;
@@ -4436,6 +4410,74 @@
         tbody.innerHTML = rowsHtml;
       }
 
+      function renderKbliProvFilterOptions() {
+        const sel = document.getElementById(`kbli-prov-filter`);
+        if (!sel) return;
+        const provs = PROVINCES.filter(function (p) {
+          return p.umspSectors.length > 0;
+        });
+        const totalEntries = provs.reduce(function (acc, p) {
+          return acc + p.umspSectors.length;
+        }, 0);
+        const prev = sel.value;
+        sel.innerHTML =
+          `<option value="ALL">Semua Provinsi UMSP (` +
+          provs.length +
+          ` provinsi · ` +
+          totalEntries +
+          ` entri)</option>` +
+          provs
+            .map(function (p) {
+              return (
+                `<option value="` +
+                escapeHtml(p.id) +
+                `">` +
+                escapeHtml(p.name) +
+                ` (` +
+                p.umspSectors.length +
+                ` entri)</option>`
+              );
+            })
+            .join(``);
+        const stillExists = provs.some(function (p) {
+          return p.id === prev;
+        });
+        sel.value = prev === `ALL` || stillExists ? prev : `ALL`;
+      }
+
+      function updateFilterOptionLabels() {
+        const regionEl = document.getElementById(`region-filter`);
+        if (regionEl) {
+          Array.prototype.forEach.call(regionEl.options, function (opt) {
+            if (opt.value === `ALL`) {
+              opt.textContent = `Semua Wilayah (` + PROVINCES.length + `)`;
+              return;
+            }
+            const count = PROVINCES.filter(function (p) {
+              return p.region === opt.value;
+            }).length;
+            opt.textContent = opt.value + ` (` + count + `)`;
+          });
+        }
+
+        const umspEl = document.getElementById(`umsp-filter`);
+        if (umspEl) {
+          const hasUmsp = PROVINCES.filter(function (p) {
+            return p.umspSectors.length > 0;
+          }).length;
+          Array.prototype.forEach.call(umspEl.options, function (opt) {
+            if (opt.value === `ALL`) {
+              opt.textContent = `Semua Provinsi (` + PROVINCES.length + `)`;
+            } else if (opt.value === `HAS_UMSP`) {
+              opt.textContent = `Memiliki UMSP (` + hasUmsp + `)`;
+            } else if (opt.value === `UMP_ONLY`) {
+              opt.textContent =
+                `Hanya UMP (` + (PROVINCES.length - hasUmsp) + `)`;
+            }
+          });
+        }
+      }
+
       function renderKbliDirectory() {
         const tbody = document.getElementById(`kbli-directory-body`);
         const countEl = document.getElementById(`kbli-count-label`);
@@ -4489,6 +4531,22 @@
             ` dari ` +
             entries.length +
             ` entri sektor/KBLI`;
+        }
+
+        const metaEl = document.getElementById(`kbli-section-meta`);
+        const sectionCountEl = document.getElementById(`kbli-section-count`);
+        const umspProvCount = PROVINCES.filter(function (p) {
+          return p.umspSectors.length > 0;
+        }).length;
+        if (metaEl) {
+          metaEl.textContent =
+            `PENJELAJAH TARIF UMSP & KODE KBLI LINTAS PROVINSI (` +
+            entries.length +
+            ` ENTRI)`;
+        }
+        if (sectionCountEl) {
+          sectionCountEl.textContent =
+            umspProvCount + ` PROVINSI · KBLI 5 DIGIT & KELOMPOK SEKTOR`;
         }
 
         if (filtered.length === 0) {
@@ -4692,6 +4750,8 @@
       }
 
       document.addEventListener(`DOMContentLoaded`, function () {
+        renderKbliProvFilterOptions();
+        updateFilterOptionLabels();
         renderNationalKpis();
         renderUmspQuickList();
         renderAll();
