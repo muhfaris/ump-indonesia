@@ -19,14 +19,30 @@ Data pada dasbor diambil dari 18 berkas SK Gubernur. Untuk data resmi, selalu ru
 
 Tiga provinsi memiliki dua baris terpisah (UMP dan rincian UMK): Jawa Barat, Jawa Tengah, dan Jawa Timur.
 
+Seluruh angka cakupan pada UI (jumlah provinsi, entri, SK UMP, provinsi ber-UMSP/UMK, dan entri sektor) dihitung saat runtime dari `const PROVINCES` melalui `computeDataStats()`. Tidak ada angka cakupan yang ditulis manual di markup, kecuali `<title>` dan meta description yang harus tetap statis untuk crawler.
+
 ## Struktur
 
 ```
 index.html          # dasbor lengkap: data inline (const PROVINCES), UI, grafik Chart.js
 jabar_umk_2027.json # snapshot data mentah UMK Jawa Barat 2027
+robots.txt          # aturan crawler + rujukan sitemap
+sitemap.xml         # sitemap satu URL
+og-image.png        # gambar pratinjau 1200x630 untuk Open Graph / Twitter Card
 ```
 
 Data provinsi berada di dalam `index.html` pada `const PROVINCES` — tidak ada proses build dan tidak ada berkas data eksternal yang dimuat saat runtime.
+
+## SEO
+
+`index.html` memuat metadata berikut:
+
+- `<title>`, `meta description`, `meta keywords`, `meta robots` (`index, follow, max-image-preview:large`), `author`, `theme-color`
+- `link rel="canonical"` dan favicon SVG inline
+- Open Graph (`og:*`) dan Twitter Card (`summary_large_image`) dengan `og-image.png`
+- JSON-LD `WebPage`, `WebSite`, dan `Dataset` (cakupan spasial Indonesia, temporal 2027, kredit sumber data)
+
+URL kanonis dan sitemap memakai `https://muhfaris.github.io/ump-indonesia/` (GitHub Pages). Jika dasbor dipasang di domain lain, ubah `canonical`, `og:url`, `og:image`, `twitter:image`, `sitemap.xml`, dan `robots.txt` secara bersamaan.
 
 ## Menjalankan
 
